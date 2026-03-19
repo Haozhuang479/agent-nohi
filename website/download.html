@@ -19,7 +19,7 @@
   <ul class="nav-links">
     <li><a href="download.html">Download</a></li>
     <li><a href="docs.html">Docs</a></li>
-    <li><a href="https://github.com/your-org/agent-nohi" target="_blank">GitHub</a></li>
+    <li><a href="https://github.com/Haozhuang479/agent-nohi" target="_blank">GitHub</a></li>
   </ul>
   <a class="nav-cta" href="download.html">Download Free →</a>
 </nav>
@@ -30,7 +30,7 @@
   <p>Free to download. Connect your AI provider, add your store data, and Nohi gets to work.</p>
 
   <div class="platform-cards">
-    <a class="platform-card" href="https://github.com/your-org/agent-nohi/releases/latest/download/AgentNohi-1.0.0-arm64.dmg" id="mac-as">
+    <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent%20Nohi-1.0.0-arm64.dmg" id="mac-as">
       <div class="platform-icon">🍎</div>
       <h3>macOS</h3>
       <p>Apple Silicon (M1/M2/M3)<br/>macOS 13 Ventura or later</p>
@@ -39,7 +39,7 @@
       </div>
     </a>
 
-    <a class="platform-card" href="https://github.com/your-org/agent-nohi/releases/latest/download/AgentNohi-1.0.0-x64.dmg" id="mac-intel">
+    <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent%20Nohi-1.0.0.dmg" id="mac-intel">
       <div class="platform-icon">💻</div>
       <h3>macOS Intel</h3>
       <p>Intel Mac<br/>macOS 13 Ventura or later</p>
@@ -48,7 +48,7 @@
       </div>
     </a>
 
-    <a class="platform-card" href="https://github.com/your-org/agent-nohi/releases/latest/download/AgentNohi-Setup-1.0.0.exe" id="win">
+    <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent%20Nohi%20Setup%201.0.0.exe" id="win">
       <div class="platform-icon">🪟</div>
       <h3>Windows</h3>
       <p>Windows 10 / 11 (64-bit)</p>
@@ -57,7 +57,7 @@
       </div>
     </a>
 
-    <a class="platform-card" href="https://github.com/your-org/agent-nohi/releases/latest/download/AgentNohi-1.0.0.AppImage" id="linux">
+    <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent%20Nohi-1.0.0.AppImage" id="linux">
       <div class="platform-icon">🐧</div>
       <h3>Linux</h3>
       <p>AppImage — runs on most<br/>major Linux distributions</p>
@@ -80,7 +80,7 @@
 
   <p style="margin-top: 28px; font-size: 13px; color: var(--muted);">
     All releases are also available on
-    <a href="https://github.com/your-org/agent-nohi/releases" target="_blank">GitHub Releases →</a>
+    <a href="https://github.com/Haozhuang479/agent-nohi/releases" target="_blank">GitHub Releases →</a>
   </p>
 </div>
 
@@ -91,7 +91,7 @@
   <ul class="footer-links">
     <li><a href="download.html">Download</a></li>
     <li><a href="docs.html">Docs</a></li>
-    <li><a href="https://github.com/your-org/agent-nohi" target="_blank">GitHub</a></li>
+    <li><a href="https://github.com/Haozhuang479/agent-nohi" target="_blank">GitHub</a></li>
   </ul>
   <span>© 2026 Nohi</span>
 </footer>
@@ -102,13 +102,13 @@ const ua = navigator.userAgent
 if (ua.includes('Mac')) {
   const isAS = ua.includes('AppleWebKit') && !ua.includes('Intel')
   document.getElementById(isAS ? 'mac-as' : 'mac-intel')
-    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(74,82,64,0.08);')
+    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
 } else if (ua.includes('Win')) {
   document.getElementById('win')
-    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(74,82,64,0.08);')
+    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
 } else if (ua.includes('Linux')) {
   document.getElementById('linux')
-    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(74,82,64,0.08);')
+    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
 }
 </script>
 
