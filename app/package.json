@@ -1,6 +1,6 @@
 {
   "name": "agent-nohi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agent Nohi — Your local AI agent",
   "main": "dist/main/index.js",
   "author": "Nohi Team",
