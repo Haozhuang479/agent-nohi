@@ -33,16 +33,7 @@
     <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent-Nohi-1.0.0-arm64.dmg" id="mac-as">
       <div class="platform-icon">🍎</div>
       <h3>macOS</h3>
-      <p>Apple Silicon (M1/M2/M3)<br/>macOS 13 Ventura or later</p>
-      <div class="download-btn-label">
-        ⬇ Download .dmg
-      </div>
-    </a>
-
-    <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent-Nohi-1.0.0.dmg" id="mac-intel">
-      <div class="platform-icon">💻</div>
-      <h3>macOS Intel</h3>
-      <p>Intel Mac<br/>macOS 13 Ventura or later</p>
+      <p>Apple Silicon & Intel<br/>macOS 13 Ventura or later</p>
       <div class="download-btn-label">
         ⬇ Download .dmg
       </div>
@@ -100,8 +91,7 @@
 // Auto-detect platform and highlight recommended download
 const ua = navigator.userAgent
 if (ua.includes('Mac')) {
-  const isAS = ua.includes('AppleWebKit') && !ua.includes('Intel')
-  document.getElementById(isAS ? 'mac-as' : 'mac-intel')
+  document.getElementById('mac-as')
     ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
 } else if (ua.includes('Win')) {
   document.getElementById('win')
