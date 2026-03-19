@@ -1,0 +1,61 @@
+.tool-block {
+  margin: 2px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  max-width: 600px;
+}
+
+.tool-block:hover { border-color: var(--accent); }
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--surface2);
+}
+
+.tool-icon {
+  color: var(--yellow);
+}
+
+.result-icon {
+  color: var(--green);
+}
+
+.tool-name {
+  flex: 1;
+  color: var(--text-muted);
+  font-family: var(--mono);
+}
+
+.tool-chevron {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.tool-body {
+  padding: 10px 12px;
+  background: var(--surface);
+  font-size: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  color: var(--text-muted);
+}
+
+.tool-screenshot {
+  padding: 8px;
+}
+
+.tool-screenshot-img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}

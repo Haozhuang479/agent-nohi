@@ -1,0 +1,82 @@
+{
+  "name": "agent-nohi",
+  "version": "1.0.0",
+  "description": "Agent Nohi — Your local AI agent",
+  "main": "dist/main/index.js",
+  "author": "Nohi Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
+    "dev:vite": "vite",
+    "dev:electron": "wait-on http://localhost:5173 && tsc -p tsconfig.main.json && electron .",
+    "build": "vite build && tsc -p tsconfig.main.json",
+    "package": "npm run build && electron-builder",
+    "release": "npm run build && electron-builder --publish always",
+    "start": "electron ."
+  },
+  "build": {
+    "appId": "com.nohi.agent",
+    "productName": "Agent Nohi",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "public/**/*"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Haozhuang479",
+      "repo": "agent-nohi"
+    }
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@types/node-cron": "^3.0.11",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "cors": "^2.8.6",
+    "electron-store": "^11.0.2",
+    "electron-updater": "^6.8.3",
+    "express": "^5.2.1",
+    "i18next": "^25.8.18",
+    "node-cron": "^4.2.1",
+    "openai": "^6.29.0",
+    "playwright": "^1.58.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^16.5.8",
+    "vite": "^8.0.0",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.0",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.1",
+    "electron": "^41.0.2",
+    "electron-builder": "^26.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "wait-on": "^8.0.5"
+  }
+}

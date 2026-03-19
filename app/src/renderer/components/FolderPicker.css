@@ -1,0 +1,135 @@
+/* ── FolderPicker ── */
+.fp-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.fp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+}
+
+.fp-btn:hover {
+  background: rgba(80,78,76,0.07);
+  color: var(--text);
+}
+
+.fp-btn svg {
+  flex-shrink: 0;
+}
+
+.fp-btn-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dropdown */
+.fp-dropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  min-width: 300px;
+  max-width: 380px;
+  background: var(--surface2, var(--surface));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  z-index: 300;
+  overflow: hidden;
+  padding: 6px 4px;
+}
+
+/* For status bar — dropdown opens upward by default, but statusbar is at bottom */
+.fp-wrap.fp-statusbar .fp-dropdown {
+  bottom: calc(100% + 6px);
+  left: 0;
+}
+
+.fp-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px 2px;
+  opacity: 0.65;
+}
+
+.fp-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.fp-item:hover {
+  background: rgba(80,78,76,0.08);
+}
+
+.fp-item-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.fp-item-text {
+  flex: 1;
+  overflow: hidden;
+}
+
+.fp-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fp-item-path {
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+.fp-empty-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 10px 6px;
+  opacity: 0.6;
+}
+
+.fp-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 6px;
+}
+
+.fp-choose .fp-item-name {
+  color: var(--text-muted);
+  font-weight: 400;
+}

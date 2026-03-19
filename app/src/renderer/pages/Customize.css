@@ -1,0 +1,503 @@
+/* ── Customize page layout ── */
+.customize-page {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Left sub-sidebar ── */
+.csub {
+  width: 220px;
+  min-width: 220px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 12px 8px 16px;
+  gap: 2px;
+}
+
+.csub-folder-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: default;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.csub-folder-chip svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.csub-folder-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+.csub-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.1s, color 0.1s;
+}
+
+.csub-item:hover {
+  background: rgba(80,78,76,0.07);
+  color: var(--text);
+}
+
+.csub-item.active {
+  background: rgba(80,78,76,0.12);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.csub-item svg {
+  flex-shrink: 0;
+}
+
+.csub-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 4px;
+}
+
+.csub-promo {
+  margin-top: auto;
+  padding: 10px 6px 0;
+}
+
+.csub-promo-text {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.csub-promo-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--text);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.csub-promo-btn:hover {
+  background: rgba(80,78,76,0.08);
+}
+
+/* ── Middle list panel ── */
+.clist {
+  width: 290px;
+  min-width: 290px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.clist-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.clist-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.clist-icon-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.clist-icon-btn:hover {
+  background: rgba(80,78,76,0.08);
+  color: var(--text);
+}
+
+.clist-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 6px;
+}
+
+.clist-group-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 8px 10px 4px;
+  opacity: 0.65;
+}
+
+.clist-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.1s;
+  position: relative;
+}
+
+.clist-item:hover {
+  background: rgba(80,78,76,0.07);
+}
+
+.clist-item.selected {
+  background: rgba(80,78,76,0.13);
+}
+
+.clist-item svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.clist-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clist-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(80,78,76,0.10);
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.clist-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* ── Right detail panel ── */
+.cdetail {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Landing */
+.cdetail-landing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 48px 48px 32px;
+}
+
+.cdetail-landing-icon {
+  width: 80px;
+  height: 80px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  margin-bottom: 20px;
+}
+
+.cdetail-landing-tagline {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 420px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.cdetail-cta-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+  max-width: 600px;
+}
+
+.cdetail-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: opacity 0.1s;
+}
+
+.cdetail-cta-row:hover {
+  opacity: 0.75;
+}
+
+.cdetail-cta-icon {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.cdetail-cta-text {
+  flex: 1;
+}
+
+.cdetail-cta-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.cdetail-cta-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.cdetail-cta-arrow {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+/* Skill detail */
+.cdetail-skill-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cdetail-skill-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cdetail-toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--accent);
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.cdetail-toggle.off {
+  background: var(--surface2);
+}
+
+.cdetail-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: right 0.2s;
+}
+
+.cdetail-toggle.off::after {
+  right: auto;
+  left: 2px;
+}
+
+.disabled-skill {
+  opacity: 0.5;
+}
+
+.clist-skill-off {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: var(--surface2);
+  border-radius: 3px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cdetail-menu-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.1s;
+}
+
+.cdetail-menu-btn:hover {
+  background: rgba(80,78,76,0.08);
+}
+
+.cdetail-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cdetail-meta-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cdetail-meta-label {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.cdetail-meta-value {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.cdetail-section {
+  padding: 16px 20px;
+}
+
+.cdetail-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+
+.cdetail-content-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.6;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+/* Connector detail */
+.cdetail-connector-hdr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+}
+
+.cdetail-connector-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cdetail-connector-name {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cdetail-connector-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.cdetail-connector-btn:hover {
+  background: rgba(80,78,76,0.08);
+}

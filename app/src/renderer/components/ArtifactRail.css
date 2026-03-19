@@ -1,0 +1,141 @@
+.artifact-rail {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  min-width: 220px;
+  max-width: 400px;
+  border-left: 1px solid var(--border);
+  background: var(--sidebar-bg);
+  overflow: hidden;
+}
+
+.artifact-rail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.artifact-rail-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.artifact-rail-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 9999px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.artifact-rail-close:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.artifact-rail-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.artifact-rail-empty {
+  padding: 20px 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.artifact-item {
+  border-bottom: 1px solid var(--border);
+}
+
+.artifact-item:last-child {
+  border-bottom: none;
+}
+
+.artifact-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+  color: var(--text);
+}
+
+.artifact-item-header:hover {
+  background: var(--surface2);
+}
+
+.artifact-item-header.open {
+  background: var(--surface);
+}
+
+.artifact-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.artifact-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.artifact-ext {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.artifact-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.artifact-path {
+  padding: 2px 12px 4px 32px;
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono);
+}
+
+.artifact-preview {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 12px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre;
+  max-height: 300px;
+  overflow-y: auto;
+}

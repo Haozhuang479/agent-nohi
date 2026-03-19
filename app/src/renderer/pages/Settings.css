@@ -1,0 +1,327 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.settings-header {
+  padding: 28px 32px 0;
+}
+
+.settings-header h1 {
+  font-size: 22px;
+  font-weight: 500;
+  font-style: italic;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.settings-header p {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.settings-body {
+  padding: 24px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 560px;
+}
+
+.settings-section h2 {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: 1.55;
+}
+
+.provider-grid {
+  display: flex;
+  gap: 10px;
+}
+
+.provider-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text-muted);
+  transition: all 0.12s;
+}
+
+.provider-card:hover {
+  border-color: rgba(80,78,76,0.25);
+  color: var(--text);
+}
+
+.provider-card.active {
+  border-color: var(--accent);
+  border-width: 2px;
+  background: rgba(80,78,76,0.06);
+  color: var(--text);
+}
+
+.provider-icon {
+  font-size: 18px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.provider-card.active .provider-icon {
+  color: var(--text);
+}
+
+.provider-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.get-key-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.get-key-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.optional {
+  font-weight: 400;
+  text-transform: none;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.save-btn {
+  padding: 10px 28px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  width: fit-content;
+  transition: background 0.12s;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.save-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+
+/* ── MCP Servers ── */
+.mcp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.mcp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-radius: 12px;
+}
+
+.mcp-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mcp-item-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.mcp-item-cmd {
+  display: block;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcp-item-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  transition: color 0.15s;
+}
+
+.mcp-item-remove:hover { color: var(--red, #ef4444); }
+
+.mcp-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mcp-input { font-size: 13px; }
+
+.mcp-add-btn {
+  align-self: flex-start;
+  padding: 7px 18px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.mcp-add-btn:hover:not(:disabled) { background: var(--surface); }
+.mcp-add-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Remote Access ── */
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text);
+  user-select: none;
+}
+
+.settings-toggle input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.remote-config {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  min-width: 40px;
+}
+
+.settings-input-sm {
+  width: 90px;
+}
+
+.remote-token-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.remote-token-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remote-token {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface2);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+  white-space: nowrap;
+}
+
+.remote-copy-btn {
+  padding: 5px 14px;
+  font-size: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.12s;
+}
+
+.remote-copy-btn:hover { background: var(--surface); }
+
+/* ── Language ── */
+.lang-grid {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-btn {
+  padding: 7px 20px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lang-btn:hover { background: var(--surface); }
+
+.lang-btn.active {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+/* ── Misc utilities ── */
+.mt-8 { margin-top: 8px; }

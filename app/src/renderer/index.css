@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           hsl(40, 33%, 96%);
+  --sidebar-bg:   hsl(40, 25%, 93%);
+  --surface:      hsl(40, 33%, 99%);
+  --surface2:     hsl(40, 25%, 94%);
+  --border:       hsl(30, 10%, 88%);
+  --text:         hsl(30, 10%, 10%);
+  --text-muted:   hsl(30,  5%, 45%);
+  --accent:       hsl(30, 6%, 36%);
+  --accent-fg:    hsl(40, 20%, 96%);
+  --accent-hover: hsl(30, 6%, 28%);
+  --green:        #16a34a;
+  --yellow:       #b45309;
+  --red:          #c0392b;
+  --radius:       16px;
+  --font:         'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono:         'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+}
+
+/* ── Dark theme ───────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:           hsl(30,  8%, 10%);
+  --sidebar-bg:   hsl(30,  8%,  8%);
+  --surface:      hsl(30,  6%, 14%);
+  --surface2:     hsl(30,  5%, 17%);
+  --border:       hsl(30,  5%, 22%);
+  --text:         hsl(40, 25%, 94%);
+  --text-muted:   hsl(30,  5%, 55%);
+  --accent:       hsl(30, 6%, 62%);
+  --accent-fg:    hsl(30,  8%, 10%);
+  --accent-hover: hsl(30, 6%, 52%);
+  --green:        #22c55e;
+  --yellow:       #f59e0b;
+  --red:          #ef4444;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font);
+}
+
+input, textarea, select {
+  font-family: var(--font);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+textarea {
+  border-radius: 16px;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+}
+
+select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+/* Markdown */
+pre {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+code {
+  font-family: var(--mono);
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+pre code { background: none; padding: 0; }
+
+p { margin-bottom: 8px; }
+p:last-child { margin-bottom: 0; }
+ul, ol { padding-left: 20px; margin-bottom: 8px; }
+strong { font-weight: 600; }
