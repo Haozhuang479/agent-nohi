@@ -4,16 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Download — Nohi</title>
+  <meta name="description" content="Download Nohi for macOS, Windows, or Linux. Free to download, bring your own API key." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
 
 <nav>
   <a class="nav-logo" href="index.html">
-    <span class="nav-logo-icon" style="font-size:14px;font-weight:800;background:var(--accent);color:#f5f0e8;border-radius:6px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;">N</span>
+    <span class="nav-logo-mark">N</span>
     Nohi
   </a>
   <ul class="nav-links">
@@ -21,84 +22,81 @@
     <li><a href="docs.html">Docs</a></li>
     <li><a href="https://github.com/Haozhuang479/agent-nohi" target="_blank">GitHub</a></li>
   </ul>
-  <a class="nav-cta" href="download.html">Download Free →</a>
+  <div class="nav-right">
+    <a class="nav-ghost" href="docs.html">Docs</a>
+    <a class="nav-cta" href="download.html">Download free</a>
+  </div>
 </nav>
 
-<div class="download-section">
-  <div class="badge">v1.0.1 — Available Now</div>
+<div class="download-hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    v1.0.1 — Latest release
+  </div>
   <h1>Download Nohi</h1>
-  <p>Free to download. Connect your AI provider, add your store data, and Nohi gets to work.</p>
+  <p>Free to download. Connect your AI provider, point Nohi at your store data, and it gets to work.</p>
+</div>
 
+<div class="platform-section">
   <div class="platform-cards">
     <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent-Nohi-1.0.1-arm64.dmg" id="mac-as">
       <div class="platform-icon">🍎</div>
       <h3>macOS</h3>
-      <p>Apple Silicon & Intel<br/>macOS 13 Ventura or later</p>
-      <div class="download-btn-label">
-        ⬇ Download .dmg
-      </div>
+      <p>Apple Silicon &amp; Intel<br/>macOS 13 Ventura or later</p>
+      <div class="download-btn-label">↓ Download .dmg</div>
     </a>
-
     <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent-Nohi-Setup-1.0.1.exe" id="win">
       <div class="platform-icon">🪟</div>
       <h3>Windows</h3>
-      <p>Windows 10 / 11 (64-bit)</p>
-      <div class="download-btn-label">
-        ⬇ Download .exe
-      </div>
+      <p>Windows 10 / 11<br/>64-bit</p>
+      <div class="download-btn-label">↓ Download .exe</div>
     </a>
-
     <a class="platform-card" href="https://github.com/Haozhuang479/agent-nohi/releases/latest/download/Agent-Nohi-1.0.1.AppImage" id="linux">
       <div class="platform-icon">🐧</div>
       <h3>Linux</h3>
-      <p>AppImage — runs on most<br/>major Linux distributions</p>
-      <div class="download-btn-label">
-        ⬇ Download .AppImage
-      </div>
+      <p>AppImage — runs on most major distributions</p>
+      <div class="download-btn-label">↓ Download .AppImage</div>
     </a>
   </div>
 
   <div class="requirements">
-    <h3>After downloading</h3>
+    <h3>Getting started</h3>
     <ul>
       <li>Open the app and go to <strong>Settings</strong></li>
-      <li>Choose your AI provider (Anthropic, OpenAI, or Google)</li>
-      <li>Paste your API key — stored locally, never sent to Nohi servers</li>
-      <li>Start chatting with Nohi. Ask about your orders, inventory, or customers.</li>
-      <li>Explore built-in e-commerce Skills, or create your own in <code>~/.nohi/skills/</code></li>
+      <li>Choose your AI provider — Anthropic, OpenAI, or Google</li>
+      <li>Paste your API key. It's stored locally and never sent to Nohi servers</li>
+      <li>Click <strong>Chat</strong> and ask about your orders, inventory, or customers</li>
+      <li>Explore built-in Skills or create your own in <code>~/.nohi/skills/</code></li>
     </ul>
   </div>
 
-  <p style="margin-top: 28px; font-size: 13px; color: var(--muted);">
-    All releases are also available on
+  <p class="github-note">
+    All releases are available on
     <a href="https://github.com/Haozhuang479/agent-nohi/releases" target="_blank">GitHub Releases →</a>
   </p>
 </div>
 
 <footer>
   <a class="footer-logo" href="index.html">
-    <span style="font-size:11px;font-weight:800;background:var(--accent);color:#f5f0e8;border-radius:5px;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;">N</span> Nohi
+    <span class="footer-logo-mark">N</span>
+    Nohi
   </a>
   <ul class="footer-links">
     <li><a href="download.html">Download</a></li>
     <li><a href="docs.html">Docs</a></li>
     <li><a href="https://github.com/Haozhuang479/agent-nohi" target="_blank">GitHub</a></li>
   </ul>
-  <span>© 2026 Nohi</span>
+  <span class="footer-copy">© 2026 Nohi</span>
 </footer>
 
 <script>
-// Auto-detect platform and highlight recommended download
 const ua = navigator.userAgent
 if (ua.includes('Mac')) {
-  document.getElementById('mac-as')
-    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
+  document.getElementById('mac-as')?.classList.add('recommended')
 } else if (ua.includes('Win')) {
-  document.getElementById('win')
-    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
+  document.getElementById('win')?.classList.add('recommended')
 } else if (ua.includes('Linux')) {
-  document.getElementById('linux')
-    ?.setAttribute('style', 'border-color: var(--accent); background: rgba(80,78,76,0.08);')
+  document.getElementById('linux')?.classList.add('recommended')
 }
 </script>
 

@@ -4,16 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Docs — Nohi</title>
+  <meta name="description" content="Nohi documentation — installation, API keys, Skills, scheduled tasks, and config reference." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
 
 <nav>
   <a class="nav-logo" href="index.html">
-    <span class="nav-logo-icon" style="font-size:14px;font-weight:800;background:var(--accent);color:#f5f0e8;border-radius:6px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;">N</span>
+    <span class="nav-logo-mark">N</span>
     Nohi
   </a>
   <ul class="nav-links">
@@ -21,51 +22,58 @@
     <li><a href="docs.html">Docs</a></li>
     <li><a href="https://github.com/Haozhuang479/agent-nohi" target="_blank">GitHub</a></li>
   </ul>
-  <a class="nav-cta" href="download.html">Download Free →</a>
+  <div class="nav-right">
+    <a class="nav-ghost" href="docs.html">Docs</a>
+    <a class="nav-cta" href="download.html">Download free</a>
+  </div>
 </nav>
 
 <div class="docs-layout">
   <aside class="docs-sidebar">
-    <h4>Getting Started</h4>
-    <ul>
-      <li><a href="#install" class="active">Installation</a></li>
-      <li><a href="#apikey">Configure API Key</a></li>
-      <li><a href="#first-chat">First Chat</a></li>
-    </ul>
-    <br/>
-    <h4>Features</h4>
-    <ul>
-      <li><a href="#tools">Built-in Tools</a></li>
-      <li><a href="#skills">Nohi Skills</a></li>
-      <li><a href="#scheduled-tasks">Scheduled Tasks</a></li>
-      <li><a href="#models">Supported Models</a></li>
-    </ul>
-    <br/>
-    <h4>Reference</h4>
-    <ul>
-      <li><a href="#skill-format">Skill File Format</a></li>
-      <li><a href="#config">Config File</a></li>
-    </ul>
+    <div class="docs-sidebar-section">
+      <h4>Getting Started</h4>
+      <ul>
+        <li><a href="#install" class="active">Installation</a></li>
+        <li><a href="#apikey">Configure API Key</a></li>
+        <li><a href="#first-chat">First Chat</a></li>
+      </ul>
+    </div>
+    <div class="docs-sidebar-section">
+      <h4>Features</h4>
+      <ul>
+        <li><a href="#tools">Built-in Tools</a></li>
+        <li><a href="#skills">Nohi Skills</a></li>
+        <li><a href="#scheduled-tasks">Scheduled Tasks</a></li>
+        <li><a href="#models">Supported Models</a></li>
+      </ul>
+    </div>
+    <div class="docs-sidebar-section">
+      <h4>Reference</h4>
+      <ul>
+        <li><a href="#skill-format">Skill File Format</a></li>
+        <li><a href="#config">Config File</a></li>
+      </ul>
+    </div>
   </aside>
 
   <main class="docs-content">
-    <h1>Nohi Docs</h1>
-    <p>Set up Nohi, connect your store data, and extend with Skills.</p>
+    <h1>Documentation</h1>
+    <p class="docs-lead">Set up Nohi, connect your store data, and extend with Skills.</p>
 
     <h2 id="install">Installation</h2>
     <p>Download the installer for your platform from the <a href="download.html">Downloads page</a>.</p>
     <ul>
-      <li><strong>macOS</strong>: Open the <code>.dmg</code>, drag Nohi to Applications, then open it. You may need to allow it in System Settings → Privacy &amp; Security.</li>
-      <li><strong>Windows</strong>: Run the <code>.exe</code> installer and follow the prompts.</li>
-      <li><strong>Linux</strong>: Make the <code>.AppImage</code> executable and run it: <code>chmod +x AgentNohi.AppImage && ./AgentNohi.AppImage</code></li>
+      <li><strong>macOS</strong> — Open the <code>.dmg</code>, drag Nohi to Applications, then open it. Allow it in System Settings → Privacy &amp; Security if prompted.</li>
+      <li><strong>Windows</strong> — Run the <code>.exe</code> installer and follow the prompts.</li>
+      <li><strong>Linux</strong> — Make the <code>.AppImage</code> executable: <code>chmod +x AgentNohi.AppImage &amp;&amp; ./AgentNohi.AppImage</code></li>
     </ul>
 
     <h2 id="apikey">Configure API Key</h2>
-    <p>On first launch, Nohi opens the <strong>Settings</strong> page. Choose your AI provider and paste your API key.</p>
+    <p>On first launch, Nohi opens <strong>Settings</strong>. Choose your AI provider and paste your API key.</p>
     <ul>
-      <li><strong>Anthropic</strong>: Get a key at <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></li>
-      <li><strong>OpenAI</strong>: Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></li>
-      <li><strong>Google</strong>: Get a key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a></li>
+      <li><strong>Anthropic</strong> — <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></li>
+      <li><strong>OpenAI</strong> — <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></li>
+      <li><strong>Google</strong> — <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a></li>
     </ul>
     <p>Your API key and all store data is stored locally in <code>~/.nohi/</code>. Nothing leaves your machine except AI inference requests.</p>
 
@@ -74,7 +82,7 @@
     <pre>"Show me orders from the past 7 days"
 "Which products have stock below 10 units?"
 "Draft a flash sale email for customers inactive 60+ days"</pre>
-    <p>Nohi will show each tool call it makes before executing, so you can always see what it's doing.</p>
+    <p>Nohi shows each tool call it makes before executing — you always see exactly what it's doing.</p>
 
     <h2 id="tools">Built-in Tools</h2>
     <p>Nohi has access to these tools by default:</p>
@@ -92,11 +100,11 @@
     <pre>{ "path": "/Users/you/Desktop" }</pre>
 
     <h3>run_bash</h3>
-    <p>Runs a shell command and returns stdout/stderr. Dangerous patterns (e.g. <code>rm -rf /</code>) are blocked.</p>
+    <p>Runs a shell command and returns stdout/stderr. Dangerous patterns are blocked.</p>
     <pre>{ "command": "ls -la ~/Documents" }</pre>
 
     <h2 id="skills">Nohi Skills</h2>
-    <p>Skills are Markdown files that inject context into the agent's system prompt when the user's message matches a trigger pattern. Built-in e-commerce skills load automatically. Create custom skills to teach Nohi your store's specific context.</p>
+    <p>Skills are Markdown files that inject context into the agent's system prompt when a user message matches a trigger pattern. Built-in e-commerce skills load automatically. Create custom skills to teach Nohi your store's specific context.</p>
 
     <h3>Where to put skills</h3>
     <ul>
@@ -106,38 +114,36 @@
 
     <h3>Creating a skill</h3>
     <p>Create a <code>.md</code> file with YAML frontmatter:</p>
-
     <div class="skill-example">
       <div class="label">~/.nohi/skills/flash-sale.md</div>
       <pre>---
 name: flash-sale
-description: 限时促销活动助手
+description: Flash sale assistant
 trigger: flash sale|promotion|discount|促销|折扣
 ---
 
 When helping with flash sales:
 - Always check current inventory before suggesting discount depth
-- Recommend targeting customers inactive for 30-60 days
+- Recommend targeting customers inactive for 30–60 days
 - Draft email subject lines with urgency: time-limited offers
 - Suggest bundle deals for slow-moving SKUs</pre>
     </div>
-
-    <p>When you send a message containing words like "promotion", "discount", or "促销", this skill's content is added to the agent's context.</p>
+    <p>When you send a message containing words like "promotion" or "discount", this skill's content is added to the agent's context automatically.</p>
 
     <h2 id="scheduled-tasks">Scheduled Tasks</h2>
     <p>Create recurring tasks that Nohi runs automatically on a schedule:</p>
     <ul>
       <li>Daily sales digest at 8am</li>
-      <li>Low-stock alerts when inventory drops below threshold</li>
+      <li>Low-stock alerts when inventory drops below a threshold</li>
       <li>Weekly customer win-back campaign drafts</li>
     </ul>
-    <p>Configure scheduled tasks in <strong>Settings → Scheduled Tasks</strong>, or by editing <code>~/.nohi/scheduled-tasks.json</code>.</p>
+    <p>Configure in <strong>Settings → Scheduled Tasks</strong>, or by editing <code>~/.nohi/scheduled-tasks.json</code>.</p>
 
     <h2 id="models">Supported Models</h2>
     <ul>
-      <li><strong>Anthropic</strong>: claude-sonnet-4-6, claude-opus-4-6, claude-haiku-4-5</li>
-      <li><strong>OpenAI</strong>: gpt-4o, gpt-4o-mini, o1, o3-mini</li>
-      <li><strong>Google</strong>: gemini-2.0-flash, gemini-2.5-pro</li>
+      <li><strong>Anthropic</strong> — claude-sonnet-4-6, claude-opus-4-6, claude-haiku-4-5</li>
+      <li><strong>OpenAI</strong> — gpt-4o, gpt-4o-mini, o1, o3-mini</li>
+      <li><strong>Google</strong> — gemini-2.0-flash, gemini-2.5-pro</li>
     </ul>
 
     <h2 id="skill-format">Skill File Format</h2>
@@ -149,9 +155,9 @@ trigger: word1|word2|word3
 
 &lt;instructions for the agent&gt;</pre>
     <ul>
-      <li><code>name</code>: identifier, used in logs</li>
-      <li><code>description</code>: human-readable summary</li>
-      <li><code>trigger</code>: pipe-separated keywords; if any appear in the user message, skill is activated</li>
+      <li><code>name</code> — identifier, used in logs</li>
+      <li><code>description</code> — human-readable summary</li>
+      <li><code>trigger</code> — pipe-separated keywords; any match activates the skill</li>
     </ul>
 
     <h2 id="config">Config File</h2>
@@ -169,14 +175,15 @@ trigger: word1|word2|word3
 
 <footer>
   <a class="footer-logo" href="index.html">
-    <span style="font-size:11px;font-weight:800;background:var(--accent);color:#f5f0e8;border-radius:5px;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;">N</span> Nohi
+    <span class="footer-logo-mark">N</span>
+    Nohi
   </a>
   <ul class="footer-links">
     <li><a href="download.html">Download</a></li>
     <li><a href="docs.html">Docs</a></li>
     <li><a href="https://github.com/Haozhuang479/agent-nohi" target="_blank">GitHub</a></li>
   </ul>
-  <span>© 2026 Nohi</span>
+  <span class="footer-copy">© 2026 Nohi</span>
 </footer>
 
 </body>
