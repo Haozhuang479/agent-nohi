@@ -43,7 +43,8 @@
     "publish": {
       "provider": "github",
       "owner": "Haozhuang479",
-      "repo": "agent-nohi"
+      "repo": "agent-nohi",
+      "releaseType": "release"
     }
   },
   "dependencies": {
