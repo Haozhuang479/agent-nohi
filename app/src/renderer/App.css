@@ -10,7 +10,7 @@
 .search-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.28);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -24,8 +24,8 @@
   max-width: calc(100vw - 40px);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -169,10 +169,10 @@
   -webkit-app-region: drag;
 }
 
-/* Mode color variants */
-.app-statusbar.mode-auto   { background: #3a5a40; }
-.app-statusbar.mode-plan   { background: #4a4a30; }
-.app-statusbar.mode-bypass { background: #5a3030; }
+/* Mode color variants — muted hsl tones in the same family */
+.app-statusbar.mode-auto   { background: hsl(142, 18%, 26%); }
+.app-statusbar.mode-plan   { background: hsl(46,  18%, 26%); }
+.app-statusbar.mode-bypass { background: hsl(4,   18%, 27%); }
 
 .statusbar-left,
 .statusbar-right {
@@ -505,7 +505,7 @@
   background: transparent;
   border: none;
   border-radius: 9999px;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--text);
   cursor: pointer;
   text-align: left;
@@ -849,10 +849,10 @@
   right: 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 12px;
   min-width: 230px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
   z-index: 500;
 }
 
@@ -975,10 +975,10 @@
   right: -4px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 8px;
   width: 230px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
   z-index: 500;
 }
 
@@ -1134,7 +1134,7 @@
   color: var(--accent-fg);
   border-radius: 9999px;
   padding: 8px 18px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -1208,13 +1208,13 @@
 .plan-viewer {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 16px;
   width: 680px;
   max-width: 90vw;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
   overflow: hidden;
 }
 

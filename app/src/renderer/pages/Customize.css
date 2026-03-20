@@ -41,7 +41,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12.5px;
+  font-size: 12px;
 }
 
 .csub-item {
@@ -87,7 +87,7 @@
 }
 
 .csub-promo-text {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--text-muted);
   line-height: 1.5;
   margin-bottom: 8px;
@@ -99,9 +99,9 @@
   border-radius: 9999px;
   background: transparent;
   color: var(--text);
-  font-size: 12.5px;
+  font-size: 12px;
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.12s;
 }
 
 .csub-promo-btn:hover {
@@ -192,13 +192,13 @@
 }
 
 .clist-group-label {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   padding: 8px 10px 4px;
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .clist-item {
@@ -279,19 +279,19 @@
 }
 
 .cdetail-landing-icon {
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
   color: var(--text-muted);
-  opacity: 0.5;
-  margin-bottom: 20px;
+  opacity: 0.35;
+  margin-bottom: 16px;
 }
 
 .cdetail-landing-tagline {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-muted);
   max-width: 420px;
   line-height: 1.6;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .cdetail-cta-list {
@@ -305,7 +305,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 18px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border);
   background: transparent;
   border-left: none;
@@ -314,7 +314,7 @@
   cursor: pointer;
   text-align: left;
   width: 100%;
-  transition: opacity 0.1s;
+  transition: opacity 0.12s;
 }
 
 .cdetail-cta-row:hover {
@@ -322,10 +322,10 @@
 }
 
 .cdetail-cta-icon {
-  width: 40px;
-  height: 40px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -345,7 +345,7 @@
 }
 
 .cdetail-cta-desc {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -372,15 +372,15 @@
 }
 
 .cdetail-toggle {
-  width: 36px;
-  height: 20px;
+  width: 34px;
+  height: 19px;
   border-radius: 10px;
   background: var(--accent);
   position: relative;
   flex-shrink: 0;
   cursor: pointer;
   border: none;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
 .cdetail-toggle.off {
@@ -392,11 +392,11 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: white;
-  transition: right 0.2s;
+  transition: right 0.15s;
 }
 
 .cdetail-toggle.off::after {
@@ -452,7 +452,7 @@
 }
 
 .cdetail-meta-label {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--text-muted);
   margin-bottom: 2px;
 }
@@ -471,12 +471,13 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   margin-bottom: 10px;
+  opacity: 0.7;
 }
 
 .cdetail-content-card {
@@ -484,8 +485,8 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 16px;
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text);
   line-height: 1.6;
   max-height: 340px;
@@ -515,24 +516,24 @@
 
 .cdetail-connector-name {
   flex: 1;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text);
 }
 
-.cdetail-connector-btn {
+.cdetail-connector-hdr-btn {
   padding: 6px 16px;
-  border-radius: 8px;
+  border-radius: 9999px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text);
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.12s;
 }
 
-.cdetail-connector-btn:hover {
-  background: rgba(80,78,76,0.08);
+.cdetail-connector-hdr-btn:hover {
+  background: rgba(80,78,76,0.07);
 }
 
 /* ── Connector detail ── */
