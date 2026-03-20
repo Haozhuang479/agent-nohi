@@ -26,6 +26,7 @@ interface NohiSession {
   title: string
   createdAt: string
   history: SessionMessage[]
+  archived?: boolean
 }
 
 interface ScheduledTask {
@@ -66,7 +67,7 @@ interface Window {
     getTasks(): Promise<ScheduledTask[]>
     saveTask(task: ScheduledTask): Promise<void>
     deleteTask(id: string): Promise<void>
-    runTaskNow(prompt: string): Promise<string>
+    runTaskNow(prompt: string, opts?: { agentMode?: string; model?: string; workDir?: string }): Promise<string>
     openExternal(url: string): Promise<void>
     openDirDialog(): Promise<string | null>
     getCustomSkills(): Promise<CustomSkill[]>

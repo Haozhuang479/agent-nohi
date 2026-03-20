@@ -107,12 +107,17 @@ app.whenReady().then(async () => {
   })
 
   // Run task immediately — returns full agent response text
-  ipcMain.handle('run-task-now', async (_e, prompt: string) => {
+  ipcMain.handle('run-task-now', async (_e, prompt: string, opts?: { agentMode?: string; model?: string; workDir?: string }) => {
     let result = ''
     await runAgent(
       [{ role: 'user', content: prompt }],
       (chunk: { type: string; text?: string }) => {
         if (chunk.type === 'text') result += chunk.text || ''
+      },
+      {
+        mode: (opts?.agentMode as AgentMode) ?? 'auto',
+        model: opts?.model || undefined,
+        workDir: opts?.workDir || undefined,
       }
     )
     return result.trim()

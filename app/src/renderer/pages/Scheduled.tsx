@@ -247,7 +247,11 @@ export default function Scheduled() {
     setRunningId(task.id)
     setRunResult(null)
     try {
-      const result = await window.nohi.runTaskNow(task.prompt)
+      const result = await window.nohi.runTaskNow(task.prompt, {
+        agentMode: task.agentMode,
+        model: task.model,
+        workDir: task.workDir,
+      })
       const now = new Date().toISOString()
       const updated: Task = { ...task, lastRun: now, lastResult: result as string }
       await persistTask(updated)

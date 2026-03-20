@@ -371,13 +371,13 @@ export default function Customize({ workDir }: CustomizeProps) {
             </span>
             <span className="cdetail-cta-arrow">→</span>
           </button>
-          <button className="cdetail-cta-row">
+          <button className="cdetail-cta-row" onClick={() => window.nohi.openExternal('https://nohi.so/plugins')}>
             <span className="cdetail-cta-icon"><IconBrowsePlugins /></span>
             <span className="cdetail-cta-text">
               <span className="cdetail-cta-title">Browse plugins</span>
               <span className="cdetail-cta-desc">Tailor Claude to a specific subject</span>
             </span>
-            <span className="cdetail-cta-arrow">→</span>
+            <span className="cdetail-cta-arrow">↗</span>
           </button>
         </div>
       </div>

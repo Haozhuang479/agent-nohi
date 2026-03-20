@@ -356,7 +356,12 @@ export default function Settings({ onSaved }: Props) {
               <button
                 key={code}
                 className={`lang-btn ${language === code ? 'active' : ''}`}
-                onClick={() => { setLanguage(code); i18nSetLanguage(code) }}
+                onClick={async () => {
+                  setLanguage(code)
+                  i18nSetLanguage(code)
+                  const s = await window.nohi.getSettings()
+                  window.nohi.saveSettings({ ...s, language: code })
+                }}
               >
                 {label}
               </button>

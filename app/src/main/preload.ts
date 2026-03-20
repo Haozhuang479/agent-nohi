@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('nohi', {
   getTasks: () => ipcRenderer.invoke('get-tasks'),
   saveTask: (task: unknown) => ipcRenderer.invoke('save-task', task),
   deleteTask: (id: string) => ipcRenderer.invoke('delete-task', id),
-  runTaskNow: (prompt: string) => ipcRenderer.invoke('run-task-now', prompt),
+  runTaskNow: (prompt: string, opts?: { agentMode?: string; model?: string; workDir?: string }) => ipcRenderer.invoke('run-task-now', prompt, opts),
 
   // Shell
   openExternal: (url: string) => ipcRenderer.invoke('open-external', url),

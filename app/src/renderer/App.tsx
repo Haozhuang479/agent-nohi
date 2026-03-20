@@ -123,6 +123,14 @@ const IconCustomize = () => (
   </svg>
 )
 
+const IconArchive = () => (
+  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="1" y="1.5" width="10" height="2.5" rx="0.8"/>
+    <path d="M1.5 4v5.5a1 1 0 001 1h7a1 1 0 001-1V4"/>
+    <path d="M4.5 7h3"/>
+  </svg>
+)
+
 const IconFilter = () => (
   <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
     <path d="M2 3.5h10M4 7h6M6 10.5h2"/>
@@ -766,14 +774,24 @@ export default function App() {
 
   const activeSession = sessions.find((s) => s.id === activeId)
 
-  // Apply status + env filters (env: all projects are local, cloud/remote shows empty)
+  const archiveSession = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSessions((prev) => {
+      const updated = prev.map((s) => s.id === id ? { ...s, archived: !s.archived } : s)
+      const session = updated.find((s) => s.id === id)
+      if (session) window.nohi.saveSession(session)
+      return updated
+    })
+  }
+
+  // Apply status + env filters
   const filteredSessions = sessions
     .filter((s) => {
-      if (statusFilter === 'active') return s.history.length > 0
-      if (statusFilter === 'archived') return false // no archived concept yet
+      if (statusFilter === 'active') return !s.archived && s.history.length > 0
+      if (statusFilter === 'archived') return s.archived === true
       return true // 'all'
     })
-    .filter(() => envFilter === 'all' || envFilter === 'local') // all projects are local
+    .filter(() => envFilter === 'all' || envFilter === 'local')
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   const todaySessions = filteredSessions.filter((s) => isToday(s.createdAt))
@@ -801,6 +819,13 @@ export default function App() {
             </button>
             {hoveredSessionId === s.id && (
               <div className="session-action-btns">
+                <button
+                  className="session-action-btn"
+                  onClick={(e) => archiveSession(s.id, e)}
+                  title={s.archived ? 'Unarchive project' : 'Archive project'}
+                >
+                  <IconArchive />
+                </button>
                 <button
                   className="session-action-btn"
                   onClick={(e) => exportSession(s, e)}

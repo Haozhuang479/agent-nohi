@@ -14,6 +14,25 @@ import { runAgent } from './agent'
 // Map of taskId → active CronJob
 const jobs = new Map<string, CronTask>()
 
+// Stored tasks may use human-readable schedule labels; convert to cron
+function toCronExpr(schedule: string, scheduleTime?: string): string | null {
+  // Already a valid cron expression
+  if (cron.validate(schedule)) return schedule
+
+  const [hStr, mStr] = (scheduleTime ?? '09:00').split(':')
+  const h = parseInt(hStr ?? '9', 10)
+  const m = parseInt(mStr ?? '0', 10)
+
+  switch (schedule) {
+    case 'manual':   return null                    // never runs automatically
+    case 'hourly':   return '0 * * * *'
+    case 'daily':    return `${m} ${h} * * *`
+    case 'weekdays': return `${m} ${h} * * 1-5`
+    case 'weekly':   return `${m} ${h} * * 1`
+    default:         return null
+  }
+}
+
 /** Start the scheduler on app launch. */
 export function startScheduler(): void {
   refreshScheduler()
@@ -28,16 +47,21 @@ export function refreshScheduler(): void {
   jobs.forEach((job) => job.stop())
   jobs.clear()
 
-  const tasks = getTasks()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tasks = getTasks() as any[]
 
   for (const task of tasks) {
     if (!task.enabled) continue
-    if (!cron.validate(task.schedule)) {
-      console.warn(`[scheduler] Invalid cron expression for task "${task.name}": ${task.schedule}`)
+
+    const cronExpr = toCronExpr(task.schedule, task.scheduleTime)
+    if (!cronExpr) {
+      if (task.schedule !== 'manual') {
+        console.warn(`[scheduler] Cannot schedule task "${task.name}" with schedule: ${task.schedule}`)
+      }
       continue
     }
 
-    const job = cron.schedule(task.schedule, async () => {
+    const job = cron.schedule(cronExpr, async () => {
       console.log(`[scheduler] Running task "${task.name}" (${task.id})`)
       let result = ''
       try {
@@ -45,6 +69,11 @@ export function refreshScheduler(): void {
           [{ role: 'user', content: task.prompt }],
           (chunk: { type: string; text?: string }) => {
             if (chunk.type === 'text') result += chunk.text || ''
+          },
+          {
+            mode: task.agentMode ?? 'auto',
+            model: task.model || undefined,
+            workDir: task.workDir || undefined,
           }
         )
       } catch (err) {

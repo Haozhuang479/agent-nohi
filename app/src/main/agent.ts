@@ -37,6 +37,8 @@ export type AgentMode = 'ask' | 'auto' | 'plan' | 'bypass'
 
 export interface AgentOptions {
   mode?: AgentMode
+  model?: string      // override global settings model
+  workDir?: string    // inject working directory into system prompt
 }
 
 const BASE_TOOLS = [...filesystemTools, ...bashTools]
@@ -71,17 +73,18 @@ async function executeTool(name: string, input: Record<string, string>, mcpClien
   return 'Unknown tool'
 }
 
-function buildSystemPrompt(userMessage: string, mode?: AgentMode): string {
+function buildSystemPrompt(userMessage: string, mode?: AgentMode, workDir?: string): string {
   const settings = getSettings()
   const base = `You are Agent Nohi, a helpful local AI assistant with access to the user's computer.
 You can read/write files, list directories, and run shell commands.
 Always ask for confirmation before deleting files or running dangerous commands.
 Be concise and helpful.`
+  const dirNote = workDir ? `\n\nWorking directory for this task: ${workDir}` : ''
   const skills = loadSkills(userMessage, settings.skillsDir || undefined, settings.enabledSkills)
   const modePrefix = mode === 'plan'
     ? `You are in plan mode. Describe exactly what steps you would take and what tools you would call, but do NOT execute any tools. Use future tense ("I would...", "I will..."). Output your plan as a numbered list.\n\n`
     : ''
-  return modePrefix + base + skills
+  return modePrefix + base + dirNote + skills
 }
 
 // Anthropic path
@@ -94,7 +97,9 @@ async function runAnthropic(
   const client = new Anthropic({ apiKey: settings.apiKey })
   const userMessage = messages[messages.length - 1]?.content || ''
   const mode = options?.mode
-  const systemPrompt = buildSystemPrompt(userMessage, mode)
+  const workDir = options?.workDir
+  const modelOverride = options?.model
+  const systemPrompt = buildSystemPrompt(userMessage, mode, workDir)
 
   // Gather tools (base + MCP)
   const { tools: mcpTools, clients: mcpClients } = await getMCPTools(settings.mcpServers ?? [])
@@ -110,7 +115,7 @@ async function runAnthropic(
   let continueLoop = true
   while (continueLoop) {
     const response = await client.messages.create({
-      model: settings.model,
+      model: modelOverride || settings.model,
       max_tokens: 4096,
       system: systemPrompt,
       tools: tools as Anthropic.Tool[],
@@ -172,7 +177,9 @@ async function runOpenAI(
 
   const userMessage = messages[messages.length - 1]?.content || ''
   const mode = options?.mode
-  const systemPrompt = buildSystemPrompt(userMessage, mode)
+  const workDir = options?.workDir
+  const modelOverride = options?.model
+  const systemPrompt = buildSystemPrompt(userMessage, mode, workDir)
   const { tools: mcpTools, clients: mcpClients } = await getMCPTools(settings.mcpServers ?? [])
   activeMCPClients.add(mcpClients)
   const baseTools = mode === 'plan' ? [] : getActiveTools()
@@ -195,7 +202,7 @@ async function runOpenAI(
   let continueLoop = true
   while (continueLoop) {
     const response = await client.chat.completions.create({
-      model: settings.model,
+      model: modelOverride || settings.model,
       messages: history,
       tools: oaiTools,
     })
