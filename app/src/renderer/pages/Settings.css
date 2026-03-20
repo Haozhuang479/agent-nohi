@@ -54,10 +54,11 @@
 .provider-card {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 6px;
-  padding: 16px 10px;
+  justify-content: center;
+  gap: 0;
+  padding: 12px 10px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -88,7 +89,7 @@
 }
 
 .provider-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
 

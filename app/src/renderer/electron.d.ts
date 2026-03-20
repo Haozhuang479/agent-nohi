@@ -12,6 +12,8 @@ interface NohiSettings {
   remotePort?: number
   language?: string
   browserEnabled?: boolean
+  userName?: string
+  connections?: Record<string, string>
 }
 
 interface SessionMessage {
@@ -76,5 +78,7 @@ interface Window {
     getRemoteInfo(): Promise<{ port: number; token: string } | null>
     // Plan files
     readPlanFiles(dir: string): Promise<Array<{ name: string; content: string }>>
+    createPlanFile(dir: string, name: string, content: string): Promise<{ name: string; content: string }>
+    deletePlanFile(dir: string, name: string): Promise<void>
   }
 }

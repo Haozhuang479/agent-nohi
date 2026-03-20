@@ -167,15 +167,39 @@ interface PlanViewerProps {
   activeIdx: number
   onChangeIdx: (i: number) => void
   onClose: () => void
+  workDir: string
+  onFilesChange: (files: PlanFile[]) => void
 }
 
-function PlanViewer({ files, activeIdx, onChangeIdx, onClose }: PlanViewerProps) {
+function PlanViewer({ files, activeIdx, onChangeIdx, onClose, workDir, onFilesChange }: PlanViewerProps) {
   const ref = React.useRef<HTMLDivElement>(null)
+  const [creating, setCreating] = React.useState(false)
+  const [newPlanName, setNewPlanName] = React.useState('')
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [onClose])
+
+  const handleCreate = async () => {
+    const name = newPlanName.trim()
+    if (!name) return
+    const file = await window.nohi.createPlanFile(workDir, name, `# ${name}\n\n`)
+    onFilesChange([...files, file])
+    onChangeIdx(files.length)
+    setCreating(false)
+    setNewPlanName('')
+  }
+
+  const handleDelete = async (idx: number) => {
+    const file = files[idx]
+    if (!confirm(`Delete "${file.name}"?`)) return
+    await window.nohi.deletePlanFile(workDir, file.name)
+    const next = files.filter((_, i) => i !== idx)
+    onFilesChange(next)
+    onChangeIdx(Math.min(activeIdx, next.length - 1))
+  }
 
   return (
     <div
@@ -189,23 +213,46 @@ function PlanViewer({ files, activeIdx, onChangeIdx, onClose }: PlanViewerProps)
               <span className="plan-viewer-empty-tab">No plans</span>
             ) : (
               files.map((f, i) => (
-                <button
-                  key={f.name}
-                  className={`plan-tab ${i === activeIdx ? 'active' : ''}`}
-                  onClick={() => onChangeIdx(i)}
-                >
-                  {f.name}
-                </button>
+                <span key={f.name} className={`plan-tab-wrap ${i === activeIdx ? 'active' : ''}`}>
+                  <button
+                    className={`plan-tab ${i === activeIdx ? 'active' : ''}`}
+                    onClick={() => onChangeIdx(i)}
+                  >
+                    {f.name}
+                  </button>
+                  {i === activeIdx && (
+                    <button className="plan-tab-delete" onClick={() => handleDelete(i)} title="Delete this plan">✕</button>
+                  )}
+                </span>
               ))
+            )}
+            {creating ? (
+              <span className="plan-tab-new-row">
+                <input
+                  className="plan-tab-new-input"
+                  placeholder="plan-name"
+                  value={newPlanName}
+                  autoFocus
+                  onChange={(e) => setNewPlanName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleCreate()
+                    if (e.key === 'Escape') { setCreating(false); setNewPlanName('') }
+                  }}
+                />
+                <button className="plan-tab-new-confirm" onClick={handleCreate}>✓</button>
+                <button className="plan-tab-new-cancel" onClick={() => { setCreating(false); setNewPlanName('') }}>✕</button>
+              </span>
+            ) : (
+              <button className="plan-viewer-new-btn" onClick={() => setCreating(true)}>+ New</button>
             )}
           </div>
           <button className="plan-viewer-close" onClick={onClose}>✕</button>
         </div>
         <div className="plan-viewer-body">
-          {files.length === 0 ? (
-            <p className="plan-viewer-none">No plan files found in .claude/plans/</p>
+          {files.length === 0 && !creating ? (
+            <p className="plan-viewer-none">No plan files found in .claude/plans/ — click "+ New" to create one.</p>
           ) : (
-            <pre className="plan-viewer-content">{files[activeIdx]?.content}</pre>
+            <pre className="plan-viewer-content">{files[activeIdx]?.content ?? ''}</pre>
           )}
         </div>
       </div>
@@ -422,13 +469,14 @@ function AboutDropdown({ onClose }: { onClose: () => void }) {
 interface UserMenuProps {
   provider: string
   model: string
+  userName: string
   onClose: () => void
   onGoSettings: () => void
   onShowShortcuts: () => void
   onClearKey: () => void
 }
 
-function UserMenuDropdown({ provider, model, onClose, onGoSettings, onShowShortcuts, onClearKey }: UserMenuProps) {
+function UserMenuDropdown({ provider, model, userName, onClose, onGoSettings, onShowShortcuts, onClearKey }: UserMenuProps) {
   const ref = React.useRef<HTMLDivElement>(null)
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -444,9 +492,9 @@ function UserMenuDropdown({ provider, model, onClose, onGoSettings, onShowShortc
     <div className="user-menu-dropdown" ref={ref}>
       {/* Account header */}
       <div className="user-menu-header">
-        <div className="user-menu-avatar">N</div>
+        <div className="user-menu-avatar">{userName.charAt(0).toUpperCase()}</div>
         <div className="user-menu-header-info">
-          <span className="user-menu-name">Nohi Desktop</span>
+          <span className="user-menu-name">{userName}</span>
           <span className="user-menu-sub">{providerLabel} · {model}</span>
         </div>
       </div>
@@ -515,6 +563,9 @@ export default function App() {
   const [showPlanViewer, setShowPlanViewer] = useState(false)
   const [planFiles, setPlanFiles] = useState<PlanFile[]>([])
   const [activePlanIdx, setActivePlanIdx] = useState(0)
+  const [userName, setUserName] = useState('Nohi')
+  const [editingUserName, setEditingUserName] = useState(false)
+  const [userNameDraft, setUserNameDraft] = useState('')
 
   // Load sessions from disk on mount
   useEffect(() => {
@@ -524,6 +575,7 @@ export default function App() {
       if (s.skillsDir) setSkillsDir(s.skillsDir)
       if (s.provider) setCurrentProvider(s.provider)
       if (s.model) setCurrentModel(s.model)
+      if (s.userName) setUserName(s.userName)
       const t = s.theme ?? 'light'
       setTheme(t)
       document.documentElement.setAttribute('data-theme', t)
@@ -604,6 +656,13 @@ export default function App() {
     await window.nohi.saveSettings({ ...s, apiKey: '' })
     setHasKey(false)
     setPage('settings')
+  }
+
+  const saveUserName = async (name: string) => {
+    const trimmed = name.trim() || 'Nohi'
+    setUserName(trimmed)
+    const s = await window.nohi.getSettings()
+    window.nohi.saveSettings({ ...s, userName: trimmed })
   }
 
   const toggleTheme = async () => {
@@ -865,11 +924,33 @@ export default function App() {
 
         <div className="sidebar-bottom">
           <div className="sidebar-bottom-row">
-            <div className="user-info" onClick={() => setShowUserMenu((v) => !v)}>
-              <div className="user-avatar">N</div>
-              <div className="user-details">
-                <span className="user-name">Nohi</span>
-                <span className="user-plan">Free plan</span>
+            <div className="user-info-wrap">
+              <div className="user-info" onClick={() => setShowUserMenu((v) => !v)}>
+                <div className="user-avatar">{userName.charAt(0).toUpperCase()}</div>
+                <div className="user-details">
+                  {editingUserName ? (
+                    <input
+                      className="user-name-input"
+                      value={userNameDraft}
+                      autoFocus
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => setUserNameDraft(e.target.value)}
+                      onBlur={() => { saveUserName(userNameDraft); setEditingUserName(false) }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') { saveUserName(userNameDraft); setEditingUserName(false) }
+                        if (e.key === 'Escape') setEditingUserName(false)
+                        e.stopPropagation()
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className="user-name"
+                      onDoubleClick={(e) => { e.stopPropagation(); setUserNameDraft(userName); setEditingUserName(true) }}
+                      title="Double-click to edit name"
+                    >{userName}</span>
+                  )}
+                  <span className="user-plan">Free plan</span>
+                </div>
               </div>
             </div>
             <div className="user-menu-wrap">
@@ -877,6 +958,7 @@ export default function App() {
                 <UserMenuDropdown
                   provider={currentProvider}
                   model={currentModel}
+                  userName={userName}
                   onClose={() => setShowUserMenu(false)}
                   onGoSettings={() => setPage('settings')}
                   onShowShortcuts={() => setShowAbout(true)}
@@ -1003,6 +1085,8 @@ export default function App() {
           activeIdx={activePlanIdx}
           onChangeIdx={setActivePlanIdx}
           onClose={() => setShowPlanViewer(false)}
+          workDir={currentDir}
+          onFilesChange={setPlanFiles}
         />
       )}
 

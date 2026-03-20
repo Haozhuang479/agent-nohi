@@ -117,13 +117,11 @@ const CONNECTOR_GROUPS: Record<string, Connector[]> = {
   Web: [
     { id: 'github', name: 'GitHub', color: '#24292e', initials: 'GH' },
     { id: 'gdrive', name: 'Google Drive', color: '#4285f4', initials: 'GD' },
+    { id: 'gmail', name: 'Gmail', color: '#ea4335', initials: 'GM' },
+    { id: 'gcal', name: 'Google Calendar', color: '#1a73e8', initials: 'GC' },
   ],
   Desktop: [
     { id: 'chrome', name: 'Claude in Chrome', badge: 'INCLUDED', color: '#ea4335', initials: 'CC' },
-  ],
-  'Not connected': [
-    { id: 'gmail', name: 'Gmail', color: '#ea4335', initials: 'GM' },
-    { id: 'gcal', name: 'Google Calendar', color: '#1a73e8', initials: 'GC' },
   ],
 }
 
@@ -139,11 +137,17 @@ export default function Customize({ workDir }: CustomizeProps) {
   const [selectedConnector, setSelectedConnector] = useState<Connector | null>(null)
   const [customSkills, setCustomSkills] = useState<CustomSkill[]>([])
   const [enabledSkills, setEnabledSkills] = useState<string[]>([])
+  const [connections, setConnections] = useState<Record<string, string>>({})
+  const [connectingId, setConnectingId] = useState<string | null>(null)
+  const [tokenDraft, setTokenDraft] = useState('')
 
   useEffect(() => {
     window.nohi.getCustomSkills().then(setCustomSkills).catch(() => {})
     window.nohi.getSettings().then((s) => {
       setEnabledSkills(s.enabledSkills ?? [])
+    }).catch(() => {})
+    window.nohi.getSettings().then((s) => {
+      setConnections(s.connections ?? {})
     }).catch(() => {})
   }, [])
 
@@ -170,6 +174,23 @@ export default function Customize({ workDir }: CustomizeProps) {
     const s = await window.nohi.getSettings()
     await window.nohi.saveSettings({ ...s, enabledSkills: next }).catch(() => {})
   }
+
+  const saveConnection = async (id: string, value: string) => {
+    const s = await window.nohi.getSettings()
+    const next = { ...(s.connections ?? {}), [id]: value }
+    await window.nohi.saveSettings({ ...s, connections: next })
+    setConnections(next)
+  }
+
+  const removeConnection = async (id: string) => {
+    const s = await window.nohi.getSettings()
+    const next = { ...(s.connections ?? {}) }
+    delete next[id]
+    await window.nohi.saveSettings({ ...s, connections: next })
+    setConnections(next)
+  }
+
+  const isConnected = (id: string) => !!connections[id]
 
   const folderName = workDir ? workDir.split('/').filter(Boolean).pop() ?? workDir : 'Downloads'
 
@@ -222,18 +243,106 @@ export default function Customize({ workDir }: CustomizeProps) {
     }
 
     if (subPage === 'connectors' && selectedConnector) {
-      const connected = !CONNECTOR_GROUPS['Not connected'].some((c) => c.id === selectedConnector.id)
+      const connected = isConnected(selectedConnector.id)
+
+      // Chrome connector — show installation guide
+      if (selectedConnector.id === 'chrome') {
+        return (
+          <div className="cdetail-chrome-guide">
+            <div className="cdetail-connector-hdr">
+              <div className="cdetail-connector-logo" style={{ background: selectedConnector.color }}>
+                {selectedConnector.initials}
+              </div>
+              <span className="cdetail-connector-name">Claude in Chrome</span>
+              <span className="cdetail-badge-included">INCLUDED</span>
+            </div>
+            <p className="cdetail-guide-desc">
+              Claude in Chrome lets Nohi read and interact with your browser. It's built in — just enable it in Settings.
+            </p>
+            <ol className="cdetail-guide-steps">
+              <li>Open <strong>Settings → Advanced</strong> and toggle <strong>Browser control</strong> on</li>
+              <li>Restart Nohi if prompted</li>
+              <li>In your next chat, ask Nohi to "open Chrome and search for…"</li>
+            </ol>
+            <button
+              className="cdetail-connector-btn"
+              onClick={() => window.nohi.openExternal('https://nohi.so/docs#chrome')}
+            >
+              View docs ↗
+            </button>
+          </div>
+        )
+      }
+
+      // GitHub connector — Personal Access Token
+      if (selectedConnector.id === 'github') {
+        return (
+          <div className="cdetail-connector-detail">
+            <div className="cdetail-connector-hdr">
+              <div className="cdetail-connector-logo" style={{ background: selectedConnector.color }}>
+                {selectedConnector.initials}
+              </div>
+              <span className="cdetail-connector-name">{selectedConnector.name}</span>
+              {connected ? (
+                <button className="cdetail-connector-btn cdetail-connector-btn-danger" onClick={() => removeConnection(selectedConnector.id)}>
+                  Disconnect
+                </button>
+              ) : null}
+            </div>
+            {connected ? (
+              <p className="cdetail-connected-msg">✓ Connected — Nohi can access GitHub on your behalf.</p>
+            ) : connectingId === selectedConnector.id ? (
+              <div className="cdetail-token-form">
+                <p className="cdetail-token-label">Paste your GitHub Personal Access Token:</p>
+                <input
+                  className="cdetail-token-input"
+                  type="password"
+                  placeholder="ghp_xxxxxxxxxxxx"
+                  value={tokenDraft}
+                  onChange={(e) => setTokenDraft(e.target.value)}
+                />
+                <p className="cdetail-token-hint">
+                  Create one at <button className="cdetail-link-btn" onClick={() => window.nohi.openExternal('https://github.com/settings/tokens')}>github.com/settings/tokens</button> with <code>repo</code> scope.
+                </p>
+                <div className="cdetail-token-actions">
+                  <button className="cdetail-connector-btn" onClick={async () => {
+                    if (tokenDraft.trim()) {
+                      await saveConnection(selectedConnector.id, tokenDraft.trim())
+                      setConnectingId(null)
+                      setTokenDraft('')
+                    }
+                  }}>Save token</button>
+                  <button className="cdetail-connector-btn-ghost" onClick={() => { setConnectingId(null); setTokenDraft('') }}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <button className="cdetail-connector-btn" onClick={() => { setConnectingId(selectedConnector.id); setTokenDraft('') }}>
+                Connect
+              </button>
+            )}
+          </div>
+        )
+      }
+
+      // Google Drive / Gmail / Calendar — OAuth coming soon
       return (
-        <div>
+        <div className="cdetail-connector-detail">
           <div className="cdetail-connector-hdr">
             <div className="cdetail-connector-logo" style={{ background: selectedConnector.color }}>
               {selectedConnector.initials}
             </div>
             <span className="cdetail-connector-name">{selectedConnector.name}</span>
-            <button className="cdetail-connector-btn">
-              {connected ? 'Disconnect' : 'Connect'}
-            </button>
           </div>
+          <p className="cdetail-coming-soon">
+            OAuth integration coming soon. {selectedConnector.name} connection will be available in a future update.
+          </p>
+          <button
+            className="cdetail-connector-btn"
+            disabled
+            style={{ opacity: 0.5, cursor: 'not-allowed' }}
+          >
+            Connect (Coming soon)
+          </button>
         </div>
       )
     }
@@ -330,6 +439,7 @@ export default function Customize({ workDir }: CustomizeProps) {
                 <div className="clist-logo" style={{ background: c.color }}>{c.initials}</div>
                 <span className="clist-item-name">{c.name}</span>
                 {c.badge && <span className="clist-badge">{c.badge}</span>}
+                {!c.badge && isConnected(c.id) && <span className="clist-badge clist-badge-connected">✓</span>}
               </button>
             ))}
           </React.Fragment>

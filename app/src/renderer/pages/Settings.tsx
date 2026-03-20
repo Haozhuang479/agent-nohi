@@ -179,13 +179,6 @@ export default function Settings({ onSaved }: Props) {
                 className={`provider-card ${provider === p ? 'active' : ''}`}
                 onClick={() => handleProviderChange(p)}
               >
-                <span className="provider-icon">
-                  {p === 'anthropic' ? <IconAnthropic /> :
-                   p === 'openai' ? <IconOpenAI /> :
-                   p === 'google' ? <IconGoogle /> :
-                   p === 'deepseek' ? <IconDeepSeek /> :
-                   <IconCustom />}
-                </span>
                 <span className="provider-name">
                   {p === 'anthropic' ? 'Anthropic' :
                    p === 'openai' ? 'OpenAI' :

@@ -51,4 +51,6 @@ contextBridge.exposeInMainWorld('nohi', {
 
   // Plan files
   readPlanFiles: (dir: string) => ipcRenderer.invoke('read-plan-files', dir),
+  createPlanFile: (dir: string, name: string, content: string) => ipcRenderer.invoke('create-plan-file', dir, name, content),
+  deletePlanFile: (dir: string, name: string) => ipcRenderer.invoke('delete-plan-file', dir, name),
 })

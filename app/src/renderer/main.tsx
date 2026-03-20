@@ -41,6 +41,8 @@ if (!window.nohi) {
     installUpdate: async () => {},
     getRemoteInfo: async () => null,
     readPlanFiles: async () => [],
+    createPlanFile: async (_dir: string, name: string, content: string) => ({ name: name.endsWith('.md') ? name : `${name}.md`, content }),
+    deletePlanFile: async () => {},
   }
 }
 

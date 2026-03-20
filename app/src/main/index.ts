@@ -171,6 +171,22 @@ app.whenReady().then(async () => {
     }
   })
 
+  // Create a plan file
+  ipcMain.handle('create-plan-file', async (_e, dir: string, name: string, content: string) => {
+    const resolved = dir.startsWith('~') ? dir.replace('~', os.homedir()) : dir
+    const plansDir = path.join(resolved, '.claude', 'plans')
+    await fs.promises.mkdir(plansDir, { recursive: true })
+    const fileName = name.endsWith('.md') ? name : `${name}.md`
+    await fs.promises.writeFile(path.join(plansDir, fileName), content, 'utf-8')
+    return { name: fileName, content }
+  })
+
+  // Delete a plan file
+  ipcMain.handle('delete-plan-file', async (_e, dir: string, name: string) => {
+    const resolved = dir.startsWith('~') ? dir.replace('~', os.homedir()) : dir
+    await fs.promises.unlink(path.join(resolved, '.claude', 'plans', name))
+  })
+
   // ── Directory dialog ──────────────────────────────────────────────────────
   ipcMain.handle('open-dir-dialog', async () => {
     const result = await dialog.showOpenDialog(win, {

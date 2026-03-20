@@ -501,3 +501,133 @@
 .cdetail-connector-btn:hover {
   background: rgba(80,78,76,0.08);
 }
+
+/* ── Connector detail ── */
+.cdetail-connector-detail,
+.cdetail-chrome-guide {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cdetail-connected-msg {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cdetail-coming-soon {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cdetail-guide-desc {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.cdetail-guide-steps {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.8;
+  padding-left: 18px;
+}
+
+.cdetail-badge-included {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(80,78,76,0.10);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.cdetail-token-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cdetail-token-label {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.cdetail-token-input {
+  width: 100%;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-family: monospace;
+  outline: none;
+}
+.cdetail-token-input:focus { border-color: var(--accent); }
+
+.cdetail-token-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.cdetail-link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.cdetail-token-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cdetail-connector-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s;
+  align-self: flex-start;
+}
+.cdetail-connector-btn:hover { background: var(--accent-hover); }
+.cdetail-connector-btn-danger { background: rgba(220,50,50,0.12); color: #dc3232; }
+.cdetail-connector-btn-danger:hover { background: rgba(220,50,50,0.2); }
+
+.cdetail-connector-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+.cdetail-connector-btn-ghost:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+
+.clist-badge-connected {
+  background: rgba(80,78,76,0.10);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}

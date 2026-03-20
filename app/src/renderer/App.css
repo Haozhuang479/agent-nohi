@@ -280,6 +280,7 @@
 /* Top: logo + new session */
 .sidebar-top {
   padding: 0 10px 8px;
+  padding-top: 38px; /* macOS traffic lights clearance */
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -291,7 +292,6 @@
   align-items: center;
   gap: 8px;
   padding: 6px 4px 4px;
-  margin-top: 24px;
 }
 
 .logo-icon {
@@ -1293,3 +1293,76 @@
   word-break: break-word;
   margin: 0;
 }
+
+/* ── User name editable input ── */
+.user-name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--accent);
+  border-radius: 0;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  width: 100px;
+  outline: none;
+}
+
+/* ── Plan viewer: new plan + delete ── */
+.plan-tab-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.plan-tab-delete {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 9999px;
+  line-height: 1;
+}
+.plan-tab-delete:hover { color: var(--text); background: rgba(0,0,0,0.06); }
+
+.plan-viewer-new-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+.plan-viewer-new-btn:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+
+.plan-tab-new-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+}
+.plan-tab-new-input {
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid var(--accent);
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  width: 120px;
+}
+.plan-tab-new-confirm, .plan-tab-new-cancel {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 2px 4px;
+  border-radius: 9999px;
+}
+.plan-tab-new-confirm:hover { color: var(--accent); }
+.plan-tab-new-cancel:hover { color: var(--text); }

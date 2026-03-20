@@ -31,6 +31,8 @@ export interface Settings {
   language?: string
   // GAP 9: AI browser
   browserEnabled?: boolean
+  userName?: string
+  connections?: Record<string, string>  // connector_id → 'connected' | token string
 }
 
 const CONFIG_DIR = path.join(os.homedir(), '.nohi')
@@ -49,6 +51,8 @@ const DEFAULTS: Settings = {
   remotePort: 3847,
   language: 'en',
   browserEnabled: false,
+  userName: 'Nohi',
+  connections: {},
 }
 
 export function getSettings(): Settings {

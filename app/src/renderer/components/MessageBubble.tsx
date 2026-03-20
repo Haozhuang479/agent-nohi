@@ -113,8 +113,8 @@ function renderMarkdown(raw: string): string {
 
 const IconCopy = () => (
   <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="4.5" y="4.5" width="8" height="9" rx="1.2"/>
-    <path d="M2 9.5V2.5a1 1 0 011-1h7"/>
+    <rect x="1.5" y="1.5" width="7.5" height="9" rx="1.2"/>
+    <rect x="5" y="4.5" width="7.5" height="9" rx="1.2"/>
   </svg>
 )
 
