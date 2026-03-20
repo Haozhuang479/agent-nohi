@@ -277,7 +277,7 @@ type AgentMode = 'ask' | 'auto' | 'plan' | 'bypass'
 const MODES: AgentMode[] = ['ask', 'auto', 'plan']
 
 function statusbarModeLabel(mode: AgentMode): string {
-  if (mode === 'ask') return 'Plan'
+  if (mode === 'ask') return 'Ask'
   if (mode === 'auto') return 'Auto'
   if (mode === 'plan') return 'Plan'
   return 'Bypass'

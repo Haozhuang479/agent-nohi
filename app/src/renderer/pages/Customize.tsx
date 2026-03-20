@@ -140,6 +140,8 @@ export default function Customize({ workDir }: CustomizeProps) {
   const [connections, setConnections] = useState<Record<string, string>>({})
   const [connectingId, setConnectingId] = useState<string | null>(null)
   const [tokenDraft, setTokenDraft] = useState('')
+  const [listSearch, setListSearch] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
 
   useEffect(() => {
     window.nohi.getCustomSkills().then(setCustomSkills).catch(() => {})
@@ -198,6 +200,8 @@ export default function Customize({ workDir }: CustomizeProps) {
     setSubPage(p)
     setSelectedSkill(null)
     setSelectedConnector(null)
+    setListSearch('')
+    setShowSearch(false)
   }
 
   // ── Right detail content ──────────────────────────────────────────────────
@@ -389,13 +393,17 @@ export default function Customize({ workDir }: CustomizeProps) {
   const renderList = () => {
     if (!subPage) return null
 
+    const q = listSearch.toLowerCase()
+
     if (subPage === 'skills') {
+      const filteredCustom = customSkills.filter((s) => !q || s.name.toLowerCase().includes(q))
+      const filteredExample = EXAMPLE_SKILLS.filter((n) => !q || n.toLowerCase().includes(q))
       return (
         <>
-          {customSkills.length > 0 && (
+          {filteredCustom.length > 0 && (
             <>
               <div className="clist-group-label">Your skills</div>
-              {customSkills.map((s) => (
+              {filteredCustom.map((s) => (
                 <button
                   key={s.name}
                   className={`clist-item ${selectedSkill === s.name ? 'selected' : ''} ${!isSkillEnabled(s.name) ? 'disabled-skill' : ''}`}
@@ -408,18 +416,25 @@ export default function Customize({ workDir }: CustomizeProps) {
               ))}
             </>
           )}
-          <div className="clist-group-label">Examples</div>
-          {EXAMPLE_SKILLS.map((name) => (
-            <button
-              key={name}
-              className={`clist-item ${selectedSkill === name ? 'selected' : ''} ${!isSkillEnabled(name) ? 'disabled-skill' : ''}`}
-              onClick={() => setSelectedSkill(name)}
-            >
-              <IconFile />
-              <span className="clist-item-name">{name}</span>
-              {!isSkillEnabled(name) && <span className="clist-skill-off">off</span>}
-            </button>
-          ))}
+          {filteredExample.length > 0 && (
+            <>
+              <div className="clist-group-label">Examples</div>
+              {filteredExample.map((name) => (
+                <button
+                  key={name}
+                  className={`clist-item ${selectedSkill === name ? 'selected' : ''} ${!isSkillEnabled(name) ? 'disabled-skill' : ''}`}
+                  onClick={() => setSelectedSkill(name)}
+                >
+                  <IconFile />
+                  <span className="clist-item-name">{name}</span>
+                  {!isSkillEnabled(name) && <span className="clist-skill-off">off</span>}
+                </button>
+              ))}
+            </>
+          )}
+          {q && filteredCustom.length === 0 && filteredExample.length === 0 && (
+            <div className="clist-empty">No skills match "{listSearch}"</div>
+          )}
         </>
       )
     }
@@ -427,23 +442,30 @@ export default function Customize({ workDir }: CustomizeProps) {
     // Connectors
     return (
       <>
-        {Object.entries(CONNECTOR_GROUPS).map(([group, connectors]) => (
-          <React.Fragment key={group}>
-            <div className="clist-group-label">{group}</div>
-            {connectors.map((c) => (
-              <button
-                key={c.id}
-                className={`clist-item ${selectedConnector?.id === c.id ? 'selected' : ''}`}
-                onClick={() => setSelectedConnector(c)}
-              >
-                <div className="clist-logo" style={{ background: c.color }}>{c.initials}</div>
-                <span className="clist-item-name">{c.name}</span>
-                {c.badge && <span className="clist-badge">{c.badge}</span>}
-                {!c.badge && isConnected(c.id) && <span className="clist-badge clist-badge-connected">✓</span>}
-              </button>
-            ))}
-          </React.Fragment>
-        ))}
+        {Object.entries(CONNECTOR_GROUPS).map(([group, connectors]) => {
+          const filtered = connectors.filter((c) => !q || c.name.toLowerCase().includes(q))
+          if (filtered.length === 0) return null
+          return (
+            <React.Fragment key={group}>
+              <div className="clist-group-label">{group}</div>
+              {filtered.map((c) => (
+                <button
+                  key={c.id}
+                  className={`clist-item ${selectedConnector?.id === c.id ? 'selected' : ''}`}
+                  onClick={() => setSelectedConnector(c)}
+                >
+                  <div className="clist-logo" style={{ background: c.color }}>{c.initials}</div>
+                  <span className="clist-item-name">{c.name}</span>
+                  {c.badge && <span className="clist-badge">{c.badge}</span>}
+                  {!c.badge && isConnected(c.id) && <span className="clist-badge clist-badge-connected">✓</span>}
+                </button>
+              ))}
+            </React.Fragment>
+          )
+        })}
+        {q && Object.values(CONNECTOR_GROUPS).flat().every((c) => !c.name.toLowerCase().includes(q)) && (
+          <div className="clist-empty">No connectors match "{listSearch}"</div>
+        )}
       </>
     )
   }
@@ -474,7 +496,10 @@ export default function Customize({ workDir }: CustomizeProps) {
 
         <div className="csub-promo">
           <p className="csub-promo-text">Give Claude role-level expertise with Plugins</p>
-          <button className="csub-promo-btn">Browse plugins</button>
+          <button
+            className="csub-promo-btn"
+            onClick={() => window.nohi.openExternal('https://nohi.so/plugins')}
+          >Browse plugins</button>
         </div>
       </div>
 
@@ -483,9 +508,30 @@ export default function Customize({ workDir }: CustomizeProps) {
         <div className="clist">
           <div className="clist-header">
             <span className="clist-title">{subPage === 'skills' ? 'Skills' : 'Connectors'}</span>
-            <button className="clist-icon-btn" title="Search"><IconSearch /></button>
-            <button className="clist-icon-btn" title="Add"><IconPlus /></button>
+            <button
+              className={`clist-icon-btn ${showSearch ? 'active' : ''}`}
+              title="Search"
+              onClick={() => { setShowSearch((v) => !v); if (showSearch) setListSearch('') }}
+            ><IconSearch /></button>
+            {subPage === 'skills' && (
+              <button
+                className="clist-icon-btn"
+                title="Open skills folder"
+                onClick={() => window.nohi.openDirDialog()}
+              ><IconPlus /></button>
+            )}
           </div>
+          {showSearch && (
+            <div className="clist-search-wrap">
+              <input
+                className="clist-search-input"
+                placeholder={`Search ${subPage}…`}
+                value={listSearch}
+                onChange={(e) => setListSearch(e.target.value)}
+                autoFocus
+              />
+            </div>
+          )}
           <div className="clist-body">
             {renderList()}
           </div>

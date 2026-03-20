@@ -12,6 +12,7 @@ export interface Session {
   title: string
   createdAt: string
   history: SessionMessage[]
+  archived?: boolean
 }
 
 const DATA_DIR = path.join(os.homedir(), '.nohi')

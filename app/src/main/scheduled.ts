@@ -5,9 +5,15 @@ import os from 'os'
 export interface ScheduledTask {
   id: string
   name: string
+  description?: string
   prompt: string
   schedule: string       // cron expression e.g. "0 8 * * *"
-  scheduleLabel: string  // human-readable e.g. "每天 08:00"
+  scheduleLabel?: string  // human-readable e.g. "每天 08:00"
+  scheduleTime?: string
+  workDir?: string
+  worktree?: boolean
+  agentMode?: string
+  model?: string
   enabled: boolean
   createdAt: string
   lastRun?: string       // ISO timestamp

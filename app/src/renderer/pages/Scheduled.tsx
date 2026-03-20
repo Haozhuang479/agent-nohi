@@ -378,14 +378,7 @@ export default function Scheduled() {
                       placeholder="Select folder"
                     />
 
-                    {/* Worktree chip */}
-                    <button
-                      type="button"
-                      className={`sched-worktree-chip ${form.worktree ? 'active' : ''}`}
-                      onClick={() => setForm((f) => ({ ...f, worktree: !f.worktree }))}
-                    >
-                      worktree
-                    </button>
+                    {/* worktree toggle hidden — backend support pending */}
                   </div>
 
                   <div style={{ position: 'relative' }}>
