@@ -66,7 +66,7 @@ async function executeTool(name: string, input: Record<string, string>, mcpClien
   const browserToolNames = ['browser_navigate', 'browser_screenshot', 'browser_click', 'browser_type', 'browser_get_content']
   if (browserToolNames.includes(name)) return executeBrowser(name, input)
 
-  if (name === 'remember' || name === 'recall') return executeMemory(name, input)
+  if (name === 'remember' || name === 'recall' || name === 'forget') return executeMemory(name, input)
   if (name === 'search_web') return await executeSearch(input as { query: string })
 
   // MCP tool
@@ -127,11 +127,11 @@ Be concise and helpful.`
   const dirNote = workDir ? `\n\nWorking directory for this task: ${workDir}` : ''
   const skills = loadSkills(userMessage, settings.skillsDir || undefined, settings.enabledSkills)
 
-  // Inject long-term memory
+  // Inject long-term memory (capped at MAX_INJECT_CHARS, most recent first)
   const memContent = getMemoryContent()
   const memNote = memContent
-    ? `\n\n## Long-term Memory\nThe following facts have been saved about this user and their business:\n${memContent}`
-    : ''
+    ? `\n\n## Long-term Memory (most recent first)\nUse these known facts to personalise your answers. If the user shares new important facts, call remember() proactively — do not wait to be asked:\n${memContent}`
+    : `\n\n## Long-term Memory\nNo facts saved yet. If the user mentions anything important about their business (name, location, goals, preferences), call remember() right away.`
 
   // Inject active connector context
   const conns = settings.connections ?? {}
