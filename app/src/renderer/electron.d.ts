@@ -1,3 +1,10 @@
+interface MerchantProfile {
+  name: string
+  storeName: string
+  email: string
+  createdAt: string
+}
+
 interface NohiSettings {
   provider: 'anthropic' | 'openai' | 'google' | 'deepseek' | 'openai-compatible'
   apiKey: string
@@ -14,6 +21,7 @@ interface NohiSettings {
   browserEnabled?: boolean
   userName?: string
   connections?: Record<string, string>
+  merchantProfile?: MerchantProfile
 }
 
 interface SessionMessage {
@@ -59,7 +67,7 @@ interface Window {
   nohi: {
     getSettings(): Promise<NohiSettings>
     saveSettings(s: NohiSettings): Promise<void>
-    runAgent(messages: SessionMessage[], mode?: AgentMode): Promise<void>
+    runAgent(messages: SessionMessage[], mode?: AgentMode, workDir?: string): Promise<void>
     onAgentChunk(cb: (chunk: unknown) => void): () => void
     getSessions(): Promise<NohiSession[]>
     saveSession(session: NohiSession): Promise<void>
@@ -70,6 +78,7 @@ interface Window {
     runTaskNow(prompt: string, opts?: { agentMode?: string; model?: string; workDir?: string }): Promise<string>
     openExternal(url: string): Promise<void>
     openDirDialog(): Promise<string | null>
+    openFileDialog(): Promise<{ name: string; content: string } | null>
     getCustomSkills(): Promise<CustomSkill[]>
     // GAP 6: auto-update
     onUpdateAvailable(cb: () => void): () => void
@@ -81,5 +90,8 @@ interface Window {
     readPlanFiles(dir: string): Promise<Array<{ name: string; content: string }>>
     createPlanFile(dir: string, name: string, content: string): Promise<{ name: string; content: string }>
     deletePlanFile(dir: string, name: string): Promise<void>
+    // Connectors
+    testConnection(id: string, creds: Record<string, string>): Promise<{ ok: boolean; error?: string }>
+    writeCredentialsFile(filename: string, content: string): Promise<string>
   }
 }

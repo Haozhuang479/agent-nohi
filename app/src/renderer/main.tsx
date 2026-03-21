@@ -21,7 +21,7 @@ if (!window.nohi) {
       language: 'en',
     }),
     saveSettings: async () => {},
-    runAgent: async (_messages: SessionMessage[], _mode?: AgentMode) => {},
+    runAgent: async (_messages: SessionMessage[], _mode?: AgentMode, _workDir?: string) => {},
     onAgentChunk: () => () => {},
     getSessions: async () => [],
     saveSession: async () => {},
@@ -43,6 +43,12 @@ if (!window.nohi) {
     readPlanFiles: async () => [],
     createPlanFile: async (_dir: string, name: string, content: string) => ({ name: name.endsWith('.md') ? name : `${name}.md`, content }),
     deletePlanFile: async () => {},
+    testConnection: async (id: string, _creds: Record<string, string>) => {
+      await new Promise((r) => setTimeout(r, 800))
+      return { ok: true } as { ok: boolean; error?: string }
+    },
+    writeCredentialsFile: async (_filename: string, _content: string) => `/Users/mock/.nohi/credentials/${_filename}`,
+    openFileDialog: async () => null,
   }
 }
 

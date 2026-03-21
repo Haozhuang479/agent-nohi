@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld('nohi', {
   saveSettings: (s: unknown) => ipcRenderer.invoke('save-settings', s),
 
   // Agent
-  runAgent: (messages: unknown[], mode?: string) => ipcRenderer.invoke('run-agent', { messages, mode }),
+  runAgent: (messages: unknown[], mode?: string, workDir?: string) => ipcRenderer.invoke('run-agent', { messages, mode, workDir }),
   onAgentChunk: (cb: (chunk: unknown) => void) => {
     const listener = (_e: Electron.IpcRendererEvent, chunk: unknown) => cb(chunk)
     ipcRenderer.on('agent-chunk', listener)
@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld('nohi', {
 
   // Dir dialog
   openDirDialog: () => ipcRenderer.invoke('open-dir-dialog'),
+  openFileDialog: () => ipcRenderer.invoke('open-file-dialog'),
 
   // Custom skills
   getCustomSkills: () => ipcRenderer.invoke('get-custom-skills'),
@@ -53,4 +54,8 @@ contextBridge.exposeInMainWorld('nohi', {
   readPlanFiles: (dir: string) => ipcRenderer.invoke('read-plan-files', dir),
   createPlanFile: (dir: string, name: string, content: string) => ipcRenderer.invoke('create-plan-file', dir, name, content),
   deletePlanFile: (dir: string, name: string) => ipcRenderer.invoke('delete-plan-file', dir, name),
+
+  // Connectors
+  testConnection: (id: string, creds: Record<string, string>) => ipcRenderer.invoke('test-connection', id, creds),
+  writeCredentialsFile: (filename: string, content: string) => ipcRenderer.invoke('write-credentials-file', filename, content),
 })

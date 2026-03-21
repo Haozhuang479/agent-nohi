@@ -279,6 +279,21 @@ app.whenReady().then(async () => {
     return result.filePaths[0]
   })
 
+  ipcMain.handle('open-file-dialog', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: 'Text & Data', extensions: ['txt', 'md', 'csv', 'json', 'xml', 'yaml', 'yml', 'html', 'css', 'js', 'ts', 'py', 'rb', 'sh', 'log'] },
+        { name: 'All Files', extensions: ['*'] },
+      ],
+    })
+    if (result.canceled || !result.filePaths.length) return null
+    const filePath = result.filePaths[0]
+    const content = fs.readFileSync(filePath, 'utf-8')
+    const name = path.basename(filePath)
+    return { name, content }
+  })
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })

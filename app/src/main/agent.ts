@@ -7,6 +7,8 @@ import { browserTools, executeBrowser } from './tools/browser'
 import { loadSkills } from './skills'
 import { getMCPTools, callMCPTool } from './mcp'
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { memoryTools, executeMemory, getMemoryContent } from './tools/memory'
+import { searchTools, executeSearch } from './tools/search'
 
 // Registry of all active MCP clients so they can be closed on shutdown
 const activeMCPClients = new Set<Map<string, Client>>()
@@ -41,7 +43,7 @@ export interface AgentOptions {
   workDir?: string    // inject working directory into system prompt
 }
 
-const BASE_TOOLS = [...filesystemTools, ...bashTools]
+const BASE_TOOLS = [...filesystemTools, ...bashTools, ...memoryTools, ...searchTools]
 
 interface AnyTool {
   name: string
@@ -63,6 +65,9 @@ async function executeTool(name: string, input: Record<string, string>, mcpClien
 
   const browserToolNames = ['browser_navigate', 'browser_screenshot', 'browser_click', 'browser_type', 'browser_get_content']
   if (browserToolNames.includes(name)) return executeBrowser(name, input)
+
+  if (name === 'remember' || name === 'recall') return executeMemory(name, input)
+  if (name === 'search_web') return await executeSearch(input as { query: string })
 
   // MCP tool
   if (mcpClients && name.includes('__')) {
@@ -115,16 +120,32 @@ function injectConnectionEnvVars(): void {
 
 function buildSystemPrompt(userMessage: string, mode?: AgentMode, workDir?: string): string {
   const settings = getSettings()
-  const base = `You are Agent Nohi, a helpful local AI assistant with access to the user's computer.
-You can read/write files, list directories, and run shell commands.
+  const base = `You are Agent Nohi, a helpful AI assistant for e-commerce merchants.
+You can read/write files, list directories, run shell commands, search the web, and remember important information across conversations.
 Always ask for confirmation before deleting files or running dangerous commands.
 Be concise and helpful.`
   const dirNote = workDir ? `\n\nWorking directory for this task: ${workDir}` : ''
   const skills = loadSkills(userMessage, settings.skillsDir || undefined, settings.enabledSkills)
+
+  // Inject long-term memory
+  const memContent = getMemoryContent()
+  const memNote = memContent
+    ? `\n\n## Long-term Memory\nThe following facts have been saved about this user and their business:\n${memContent}`
+    : ''
+
+  // Inject active connector context
+  const conns = settings.connections ?? {}
+  const activeConns = Object.keys(conns).filter((k) => conns[k])
+  const connNote = activeConns.length > 0
+    ? `\n\n## Connected Services\nThe following integrations are active and their credentials are available as environment variables: ${activeConns.join(', ')}.`
+    : ''
+
   const modePrefix = mode === 'plan'
     ? `You are in plan mode. Describe exactly what steps you would take and what tools you would call, but do NOT execute any tools. Use future tense ("I would...", "I will..."). Output your plan as a numbered list.\n\n`
+    : mode === 'ask'
+    ? `You are in ask mode. Before executing any tool that writes, deletes, or sends data, briefly explain what you are about to do and ask the user for confirmation.\n\n`
     : ''
-  return modePrefix + base + dirNote + skills
+  return modePrefix + base + dirNote + memNote + connNote + skills
 }
 
 // Anthropic path

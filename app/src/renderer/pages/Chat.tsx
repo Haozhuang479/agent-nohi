@@ -8,12 +8,14 @@ import './Chat.css'
 
 interface ChatItem {
   id: string
-  kind: 'user' | 'assistant' | 'tool_call' | 'tool_result'
+  kind: 'user' | 'assistant' | 'tool_call' | 'tool_result' | 'screenshot'
   text?: string
   toolName?: string
   toolInput?: unknown
   toolResult?: string
   streaming?: boolean
+  imageBase64?: string
+  pending?: boolean   // tool_call is executing (between call and result)
 }
 
 interface Props {
@@ -235,8 +237,9 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
   const [showModelMenu, setShowModelMenu] = useState(false)
   const [waitingFirstToken, setWaitingFirstToken] = useState(false)
   const [streamElapsed, setStreamElapsed] = useState(0)
-  const [streamTokens, setStreamTokens] = useState(0)
+  const [streamPhase, setStreamPhase] = useState<'thinking' | 'writing' | 'running'>('thinking')
   const [planContent, setPlanContent] = useState<string>('')
+  const [attachedFile, setAttachedFile] = useState<{ name: string; content: string } | null>(null)
   const streamStartRef = useRef<number | null>(null)
   const elapsedIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -270,7 +273,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
     } else {
       if (elapsedIntervalRef.current) clearInterval(elapsedIntervalRef.current)
       setStreamElapsed(0)
-      setStreamTokens(0)
+      setStreamPhase('thinking')
       streamStartRef.current = null
     }
     return () => { if (elapsedIntervalRef.current) clearInterval(elapsedIntervalRef.current) }
@@ -290,9 +293,10 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
 
   const send = async () => {
     const text = input.trim()
-    if (!text || running) return
+    if ((!text && !attachedFile) || running) return
 
     setInput('')
+    setAttachedFile(null)
     setRunning(true)
     setWaitingFirstToken(true)
 
@@ -303,7 +307,13 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
     }
     setItems((prev) => [...prev, userItem])
 
-    const newHistory: SessionMessage[] = [...history, { role: 'user', content: text }]
+    const fileBlock = attachedFile
+      ? `\n\n<attached_file name="${attachedFile.name}">\n${attachedFile.content}\n</attached_file>`
+      : ''
+    const newHistory: SessionMessage[] = [
+      ...history,
+      { role: 'user', content: text + fileBlock },
+    ]
     setHistory(newHistory)
 
     // First message → update session title
@@ -328,6 +338,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
 
       if (chunk.type === 'text') {
         setWaitingFirstToken(false)
+        setStreamPhase('writing')
         if (!currentAssistantId) {
           currentAssistantId = crypto.randomUUID()
           setItems((prev) => [
@@ -344,12 +355,11 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
           )
         }
         assistantText += chunk.text || ''
-        // Estimate tokens (≈ 1 token per 4 chars)
-        setStreamTokens((t) => t + Math.ceil((chunk.text?.length ?? 0) / 4))
       }
 
       if (chunk.type === 'tool_call') {
         currentAssistantId = null
+        setStreamPhase('running')
         const itemId = crypto.randomUUID()
         setItems((prev) => [
           ...prev,
@@ -358,6 +368,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
             kind: 'tool_call',
             toolName: chunk.toolName,
             toolInput: chunk.toolInput,
+            pending: true,
           },
         ])
         // Track write_file calls as artifacts
@@ -385,15 +396,61 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
       }
 
       if (chunk.type === 'tool_result') {
-        setItems((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            kind: 'tool_result',
-            toolName: chunk.toolName,
-            toolResult: chunk.toolResult,
-          },
-        ])
+        setStreamPhase('writing')
+        const isScreenshotResult =
+          chunk.toolName === 'browser_screenshot' &&
+          typeof chunk.toolResult === 'string' &&
+          chunk.toolResult.length > 200
+
+        if (isScreenshotResult) {
+          // Mark pending tool_call done, then append screenshot
+          setItems((prev) => {
+            let foundIdx = -1
+            for (let i = prev.length - 1; i >= 0; i--) {
+              if (prev[i].kind === 'tool_call' && prev[i].toolName === chunk.toolName && prev[i].pending) {
+                foundIdx = i; break
+              }
+            }
+            const updated = foundIdx >= 0
+              ? prev.map((item, i) => i === foundIdx ? { ...item, pending: false } : item)
+              : prev
+            return [
+              ...updated,
+              {
+                id: crypto.randomUUID(),
+                kind: 'screenshot' as const,
+                toolName: chunk.toolName,
+                imageBase64: chunk.toolResult,
+              },
+            ]
+          })
+        } else {
+          // Merge result into the pending tool_call item
+          setItems((prev) => {
+            let foundIdx = -1
+            for (let i = prev.length - 1; i >= 0; i--) {
+              if (prev[i].kind === 'tool_call' && prev[i].toolName === chunk.toolName && prev[i].pending) {
+                foundIdx = i; break
+              }
+            }
+            if (foundIdx >= 0) {
+              return prev.map((item, i) =>
+                i === foundIdx ? { ...item, pending: false, toolResult: chunk.toolResult } : item
+              )
+            }
+            // Fallback: no matching pending item found, push standalone
+            return [
+              ...prev,
+              {
+                id: crypto.randomUUID(),
+                kind: 'tool_call' as const,
+                toolName: chunk.toolName,
+                toolResult: chunk.toolResult,
+                pending: false,
+              },
+            ]
+          })
+        }
       }
 
       if (chunk.type === 'done') {
@@ -428,7 +485,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
       }
     })
 
-    await window.nohi.runAgent(newHistory, agentMode)
+    await window.nohi.runAgent(newHistory, agentMode, workDir)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -476,14 +533,25 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
               />
             )
           }
-          if (item.kind === 'tool_call' || item.kind === 'tool_result') {
+          if (item.kind === 'screenshot') {
+            return (
+              <div key={item.id} className="screenshot-item">
+                  <img
+                  src={`data:image/png;base64,${item.imageBase64}`}
+                  alt="Browser screenshot"
+                  className="screenshot-img"
+                />
+              </div>
+            )
+          }
+          if ((item.kind === 'tool_call' || item.kind === 'tool_result') && !(item.toolName === 'browser_screenshot' && !item.pending)) {
             return (
               <ToolCallBlock
                 key={item.id}
-                kind={item.kind}
                 toolName={item.toolName || ''}
                 toolInput={item.toolInput}
                 toolResult={item.toolResult}
+                pending={item.pending}
               />
             )
           }
@@ -506,6 +574,15 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
       <div className="input-card">
         {/* Row 1: textarea + send/stop */}
         <div className="input-row">
+          <button
+            className="attach-btn"
+            title="Attach file"
+            disabled={running}
+            onClick={async () => {
+              const file = await window.nohi.openFileDialog()
+              if (file) setAttachedFile(file)
+            }}
+          >+</button>
           <div className="input-col">
             <textarea
               ref={inputRef}
@@ -518,6 +595,12 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
               disabled={running}
             />
           </div>
+          {attachedFile && (
+            <div className="attached-file-badge">
+              <span className="attached-file-name">{attachedFile.name}</span>
+              <button className="attached-file-remove" onClick={() => setAttachedFile(null)}>×</button>
+            </div>
+          )}
           {running ? (
             <button className="stop-btn" onClick={stopAgent} title="Stop generation">
               <IconStop />
@@ -569,7 +652,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
             {/* Stream stats */}
             {running && (
               <span className="stream-stats">
-                {streamElapsed}s · ↓ {streamTokens} tokens · thinking
+                {streamElapsed}s · {streamPhase === 'running' ? 'using tools' : streamPhase === 'writing' ? 'writing' : 'thinking'}
               </span>
             )}
 
