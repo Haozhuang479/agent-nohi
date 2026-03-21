@@ -47,6 +47,18 @@ const MODELS: Record<string, string[]> = {
   'openai-compatible': [],
 }
 
+function modelDisplayName(modelId: string): string {
+  // Strip "claude-" prefix for Anthropic models, capitalize the model family
+  if (modelId.startsWith('claude-')) {
+    const without = modelId.slice('claude-'.length) // e.g. "sonnet-4-6"
+    const parts = without.split('-')
+    const family = parts[0].charAt(0).toUpperCase() + parts[0].slice(1) // "Sonnet"
+    const version = parts.slice(1).filter(p => /^\d/.test(p)).join('.') // "4.6"
+    return version ? `${family} ${version}` : family
+  }
+  return modelId
+}
+
 type Provider = 'anthropic' | 'openai' | 'google' | 'deepseek' | 'openai-compatible'
 
 interface McpServer { name: string; command: string; args?: string[] }
@@ -237,7 +249,7 @@ export default function Settings({ onSaved }: Props) {
               onChange={(e) => setModel(e.target.value)}
             >
               {MODELS[provider].map((m) => (
-                <option key={m} value={m}>{m}</option>
+                <option key={m} value={m}>{modelDisplayName(m)}</option>
               ))}
             </select>
           )}
