@@ -631,3 +631,44 @@
   line-height: 1;
   padding: 0;
 }
+
+/* ── Plan actions bar ── */
+.plan-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin: 4px 0 8px;
+  background: var(--surface-2, #f5f6ff);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+}
+.plan-actions-label {
+  flex: 1;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.plan-execute-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent, #5b5bd6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.plan-execute-btn:hover { opacity: 0.85; }
+.plan-execute-btn:disabled { opacity: 0.4; cursor: default; }
+.plan-dismiss-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.plan-dismiss-btn:hover { background: var(--surface-2, #eee); }

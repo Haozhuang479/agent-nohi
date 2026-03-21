@@ -8,7 +8,7 @@ import './Chat.css'
 
 interface ChatItem {
   id: string
-  kind: 'user' | 'assistant' | 'tool_call' | 'tool_result' | 'screenshot'
+  kind: 'user' | 'assistant' | 'tool_call' | 'tool_result' | 'screenshot' | 'plan_actions'
   text?: string
   toolName?: string
   toolInput?: unknown
@@ -238,7 +238,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
   const [waitingFirstToken, setWaitingFirstToken] = useState(false)
   const [streamElapsed, setStreamElapsed] = useState(0)
   const [streamPhase, setStreamPhase] = useState<'thinking' | 'writing' | 'running'>('thinking')
-  const [planContent, setPlanContent] = useState<string>('')
+  const planPromptRef = useRef<string>('')
   const [attachedFile, setAttachedFile] = useState<{ name: string; content: string } | null>(null)
   const streamStartRef = useRef<number | null>(null)
   const elapsedIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -295,6 +295,7 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
     const text = input.trim()
     if ((!text && !attachedFile) || running) return
 
+    if (agentMode === 'plan') planPromptRef.current = text
     setInput('')
     setAttachedFile(null)
     setRunning(true)
@@ -465,9 +466,13 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
           : newHistory
         setHistory(finalHistory)
         onSessionUpdate?.(finalHistory)
-        // In plan mode, capture the response as the plan document
-        if (agentMode === 'plan' && assistantText) {
-          setPlanContent(assistantText)
+        // In plan mode, add an execute-actions item below the plan
+        if (agentMode === 'plan' && planPromptRef.current) {
+          const prompt = planPromptRef.current
+          setItems((prev) => [
+            ...prev,
+            { id: crypto.randomUUID(), kind: 'plan_actions' as const, text: prompt },
+          ])
         }
         setRunning(false)
         unsubRef.current?.()
@@ -501,11 +506,90 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
     e.target.style.height = Math.min(e.target.scrollHeight, 180) + 'px'
   }
 
-  const showPlanPanel = agentMode === 'plan' && planContent !== ''
   const showArtifactRail = showArtifacts && artifacts.length > 0
 
+  const executePlan = (prompt: string) => {
+    // Remove the plan_actions item, switch to auto, re-run
+    setItems((prev) => prev.filter((i) => i.kind !== 'plan_actions'))
+    onModeChange?.('auto')
+    // Slight delay so mode state propagates before send
+    setTimeout(() => {
+      setInput(prompt)
+      setTimeout(() => {
+        // Trigger send programmatically by setting input then calling send-equivalent
+        const syntheticSend = async () => {
+          if (running) return
+          setInput('')
+          setRunning(true)
+          setWaitingFirstToken(true)
+          const userItem: ChatItem = { id: crypto.randomUUID(), kind: 'user', text: prompt }
+          setItems((prev) => [...prev, userItem])
+          const newHist: SessionMessage[] = [...history, { role: 'user', content: prompt }]
+          setHistory(newHist)
+          onSessionUpdate?.(newHist)
+          let curId: string | null = null
+          let aText = ''
+          unsubRef.current?.()
+          unsubRef.current = window.nohi.onAgentChunk((raw) => {
+            const chunk = raw as { type: string; text?: string; toolName?: string; toolInput?: unknown; toolResult?: string }
+            if (chunk.type === 'text') {
+              setWaitingFirstToken(false)
+              setStreamPhase('writing')
+              if (!curId) {
+                curId = crypto.randomUUID()
+                setItems((prev) => [...prev, { id: curId!, kind: 'assistant', text: chunk.text, streaming: true }])
+              } else {
+                setItems((prev) => prev.map((item) => item.id === curId ? { ...item, text: (item.text || '') + (chunk.text || '') } : item))
+              }
+              aText += chunk.text || ''
+            }
+            if (chunk.type === 'tool_call') {
+              setWaitingFirstToken(false)
+              setStreamPhase('running')
+              setItems((prev) => [...prev, { id: crypto.randomUUID(), kind: 'tool_call', toolName: chunk.toolName, toolInput: chunk.toolInput, pending: true }])
+            }
+            if (chunk.type === 'tool_result') {
+              setStreamPhase('writing')
+              const isScreenshot = chunk.toolName === 'browser_screenshot' && typeof chunk.toolResult === 'string' && chunk.toolResult.length > 200
+              if (isScreenshot) {
+                setItems((prev) => {
+                  let idx = -1
+                  for (let i = prev.length - 1; i >= 0; i--) { if (prev[i].kind === 'tool_call' && prev[i].toolName === chunk.toolName && prev[i].pending) { idx = i; break } }
+                  const updated = idx >= 0 ? prev.map((it, i) => i === idx ? { ...it, pending: false } : it) : prev
+                  return [...updated, { id: crypto.randomUUID(), kind: 'screenshot' as const, toolName: chunk.toolName, imageBase64: chunk.toolResult }]
+                })
+              } else {
+                setItems((prev) => {
+                  let idx = -1
+                  for (let i = prev.length - 1; i >= 0; i--) { if (prev[i].kind === 'tool_call' && prev[i].toolName === chunk.toolName && prev[i].pending) { idx = i; break } }
+                  if (idx >= 0) return prev.map((it, i) => i === idx ? { ...it, pending: false, toolResult: chunk.toolResult } : it)
+                  return [...prev, { id: crypto.randomUUID(), kind: 'tool_call' as const, toolName: chunk.toolName, toolResult: chunk.toolResult, pending: false }]
+                })
+              }
+            }
+            if (chunk.type === 'done') {
+              setWaitingFirstToken(false)
+              setItems((prev) => prev.map((item) => item.id === curId ? { ...item, streaming: false } : item))
+              if (aText) setHistory((prev) => [...prev, { role: 'assistant', content: aText }])
+              setRunning(false)
+              unsubRef.current?.()
+            }
+            if (chunk.type === 'error') {
+              setWaitingFirstToken(false)
+              setItems((prev) => [...prev, { id: crypto.randomUUID(), kind: 'assistant', text: `Error: ${chunk.text}` }])
+              setRunning(false)
+              unsubRef.current?.()
+            }
+          })
+          await window.nohi.runAgent(newHist, 'auto', workDir)
+        }
+        syntheticSend()
+      }, 50)
+    }, 50)
+  }
+
   return (
-    <div className={`chat${showPlanPanel ? ' chat-plan-split' : ''}${showArtifactRail ? ' chat-artifact-split' : ''}`}>
+    <div className={`chat${showArtifactRail ? ' chat-artifact-split' : ''}`}>
     <div className="chat-main">
       <div className="messages">
         {items.length === 0 && (
@@ -541,6 +625,26 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
                   alt="Browser screenshot"
                   className="screenshot-img"
                 />
+              </div>
+            )
+          }
+          if (item.kind === 'plan_actions') {
+            return (
+              <div key={item.id} className="plan-actions-bar">
+                <span className="plan-actions-label">Ready to execute this plan?</span>
+                <button
+                  className="plan-execute-btn"
+                  onClick={() => executePlan(item.text || '')}
+                  disabled={running}
+                >
+                  ▶ Execute
+                </button>
+                <button
+                  className="plan-dismiss-btn"
+                  onClick={() => setItems((prev) => prev.filter((i) => i.id !== item.id))}
+                >
+                  Dismiss
+                </button>
               </div>
             )
           }
@@ -689,25 +793,6 @@ export default function Chat({ initialHistory = [], onSessionUpdate, agentMode =
       />
     )}
 
-    {/* ── Plan panel (shown in plan mode after first run) ── */}
-    {showPlanPanel && (
-      <div className="plan-panel">
-        <div className="plan-panel-header">
-          <IconPlanFile />
-          <span className="plan-filename">plan.md</span>
-          <button
-            className="plan-close-btn"
-            onClick={() => setPlanContent('')}
-            title="Close plan"
-          >
-            ×
-          </button>
-        </div>
-        <div className="plan-panel-body">
-          <pre className="plan-content">{planContent}</pre>
-        </div>
-      </div>
-    )}
     </div>
   )
 }
