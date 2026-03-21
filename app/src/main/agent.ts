@@ -73,6 +73,46 @@ async function executeTool(name: string, input: Record<string, string>, mcpClien
   return 'Unknown tool'
 }
 
+function injectConnectionEnvVars(): void {
+  const settings = getSettings()
+  const conns = settings.connections ?? {}
+  const parseCreds = (id: string): Record<string, string> => {
+    try { return JSON.parse(conns[id] ?? '{}') } catch { return {} }
+  }
+  if (conns['shopify']) {
+    const c = parseCreds('shopify')
+    if (c.storefront_token) process.env.SHOPIFY_STOREFRONT_TOKEN = c.storefront_token
+    if (c.domain) process.env.SHOPIFY_STORE_DOMAIN = c.domain
+  }
+  if (conns['saleor']) {
+    const c = parseCreds('saleor')
+    if (c.token) process.env.SALEOR_API_TOKEN = c.token
+    if (c.url) process.env.SALEOR_API_URL = c.url
+  }
+  if (conns['stripe']) {
+    const c = parseCreds('stripe')
+    if (c.secret_key) process.env.STRIPE_SECRET_KEY = c.secret_key
+  }
+  if (conns['google_analytics']) {
+    const c = parseCreds('google_analytics')
+    if (c.credentials_path) process.env.GA_SERVICE_ACCOUNT_JSON = c.credentials_path
+    if (c.property_id) process.env.GA_PROPERTY_ID = c.property_id
+  }
+  if (conns['google_workspace']) {
+    const c = parseCreds('google_workspace')
+    if (c.credentials_path) process.env.GOOGLE_APPLICATION_CREDENTIALS = c.credentials_path
+  }
+  if (conns['feishu']) {
+    const c = parseCreds('feishu')
+    if (c.app_id) process.env.FEISHU_APP_ID = c.app_id
+    if (c.app_secret) process.env.FEISHU_APP_SECRET = c.app_secret
+  }
+  if (conns['klaviyo']) {
+    const c = parseCreds('klaviyo')
+    if (c.api_key) process.env.KLAVIYO_API_KEY = c.api_key
+  }
+}
+
 function buildSystemPrompt(userMessage: string, mode?: AgentMode, workDir?: string): string {
   const settings = getSettings()
   const base = `You are Agent Nohi, a helpful local AI assistant with access to the user's computer.
@@ -238,6 +278,7 @@ export async function runAgent(
   onChunk: (c: AgentChunk) => void,
   options?: AgentOptions
 ): Promise<void> {
+  injectConnectionEnvVars()
   const settings = getSettings()
   try {
     if (settings.provider === 'anthropic') {

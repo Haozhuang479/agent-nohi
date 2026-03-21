@@ -54,6 +54,12 @@ const IconInfo = () => (
   </svg>
 )
 
+const IconCheck = () => (
+  <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2.5 7l3 3 6-6"/>
+  </svg>
+)
+
 // Toolbox icon for landing page
 const IconToolbox = () => (
   <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="cdetail-landing-icon">
@@ -90,6 +96,140 @@ const IconBrowsePlugins = () => (
   </svg>
 )
 
+// ─── Connector Definitions ────────────────────────────────────────────────────
+
+interface ConnectorField {
+  key: string
+  label: string
+  placeholder: string
+  type: 'text' | 'password' | 'textarea' | 'url'
+  hint?: string
+  hintUrl?: string
+  hintLabel?: string
+}
+
+interface ConnectorDef {
+  id: string
+  name: string
+  group: string
+  color: string
+  initials: string
+  description: string
+  fields: ConnectorField[]
+  badge?: string
+  isMcp?: boolean
+  mcpCommand?: string
+  mcpArgs?: string[]
+}
+
+const CONNECTOR_DEFS: ConnectorDef[] = [
+  {
+    id: 'saleor',
+    name: 'Saleor',
+    group: 'E-commerce',
+    color: '#2c2c54',
+    initials: 'SL',
+    description: 'Connect your Saleor GraphQL storefront to manage products, orders, and customers directly from Nohi.',
+    fields: [
+      { key: 'url', label: 'API URL', placeholder: 'https://your-store.saleor.cloud/graphql/', type: 'url',
+        hint: 'Find it in your Saleor Dashboard → API', hintUrl: 'https://docs.saleor.io/api-reference', hintLabel: 'Saleor API docs' },
+      { key: 'token', label: 'Auth Token', placeholder: 'your-api-token', type: 'password',
+        hint: 'Create a token in Dashboard → Settings → Staff Members' },
+    ],
+  },
+  {
+    id: 'shopify',
+    name: 'Shopify',
+    group: 'E-commerce',
+    color: '#96bf48',
+    initials: 'SH',
+    description: 'Connect to Shopify Storefront API to browse products, check inventory, and manage the cart/checkout flow. Install the Headless channel in your Shopify Admin to get a Storefront access token.',
+    fields: [
+      { key: 'domain', label: 'Store Domain', placeholder: 'mystore.myshopify.com', type: 'text',
+        hint: 'Your Shopify store URL (without https://)' },
+      { key: 'storefront_token', label: 'Storefront Access Token', placeholder: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', type: 'password',
+        hint: 'Get this from Shopify Admin → Sales channels → Headless → Create storefront', hintUrl: 'https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/getting-started', hintLabel: 'Storefront API guide' },
+    ],
+  },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    group: 'Payments',
+    color: '#635bff',
+    initials: 'ST',
+    description: 'Connect Stripe to manage payments, customers, subscriptions, and financial reports.',
+    fields: [
+      { key: 'secret_key', label: 'Secret Key', placeholder: 'sk_live_xxxxxxxx or sk_test_xxxxxxxx', type: 'password',
+        hint: 'Find your API keys in the Stripe Dashboard', hintUrl: 'https://dashboard.stripe.com/apikeys', hintLabel: 'Stripe API keys' },
+    ],
+  },
+  {
+    id: 'google_analytics',
+    name: 'Google Analytics',
+    group: 'Analytics',
+    color: '#f9ab00',
+    initials: 'GA',
+    description: 'Connect Google Analytics (GA4) to query traffic, conversion, and engagement data via MCP (mcp-google-analytics).',
+    fields: [
+      { key: 'property_id', label: 'GA4 Property ID', placeholder: '123456789', type: 'text',
+        hint: 'Find it in GA4 Admin → Property Settings', hintUrl: 'https://support.google.com/analytics/answer/10447272', hintLabel: 'Find Property ID' },
+      { key: 'credentials_json', label: 'Service Account JSON', placeholder: '{\n  "type": "service_account",\n  "project_id": "...",\n  ...\n}', type: 'textarea',
+        hint: 'Create a service account in Google Cloud Console and download the JSON key', hintUrl: 'https://cloud.google.com/iam/docs/service-accounts-create', hintLabel: 'Create service account' },
+    ],
+    isMcp: true,
+    mcpCommand: 'npx',
+    mcpArgs: ['-y', 'mcp-google-analytics'],
+  },
+  {
+    id: 'google_workspace',
+    name: 'Google Workspace',
+    group: 'Productivity',
+    color: '#4285f4',
+    initials: 'GW',
+    description: 'Connect Google Workspace to manage Gmail, Calendar, Drive, and Docs via service account.',
+    fields: [
+      { key: 'credentials_json', label: 'Service Account JSON', placeholder: '{\n  "type": "service_account",\n  "project_id": "...",\n  ...\n}', type: 'textarea',
+        hint: 'Create a service account with domain-wide delegation in Google Admin Console', hintUrl: 'https://developers.google.com/workspace/guides/create-credentials', hintLabel: 'Create credentials' },
+    ],
+  },
+  {
+    id: 'feishu',
+    name: 'Feishu / Lark',
+    group: 'Productivity',
+    color: '#3370ff',
+    initials: 'FS',
+    description: 'Connect Feishu (Lark) to send messages, manage documents, bots, and team workflows.',
+    fields: [
+      { key: 'app_id', label: 'App ID', placeholder: 'cli_xxxxxxxxxxxxxxxx', type: 'text',
+        hint: 'Find in Feishu Open Platform → App Credentials', hintUrl: 'https://open.feishu.cn/app', hintLabel: 'Feishu Open Platform' },
+      { key: 'app_secret', label: 'App Secret', placeholder: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', type: 'password',
+        hint: 'Found in the same App Credentials page' },
+    ],
+  },
+  {
+    id: 'klaviyo',
+    name: 'Klaviyo',
+    group: 'Marketing',
+    color: '#222222',
+    initials: 'KL',
+    description: 'Connect Klaviyo to manage email flows, segments, campaigns, and customer profiles.',
+    fields: [
+      { key: 'api_key', label: 'Private API Key', placeholder: 'pk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', type: 'password',
+        hint: 'Create a Private API Key in your Klaviyo Account Settings', hintUrl: 'https://www.klaviyo.com/settings/account/api-keys', hintLabel: 'Klaviyo API keys' },
+    ],
+  },
+]
+
+// Legacy / desktop connectors (non-commerce)
+const LEGACY_CONNECTOR_GROUPS: Record<string, { id: string; name: string; badge?: string; color: string; initials: string }[]> = {
+  Web: [
+    { id: 'github', name: 'GitHub', color: '#24292e', initials: 'GH' },
+  ],
+  Desktop: [
+    { id: 'chrome', name: 'Claude in Chrome', badge: 'INCLUDED', color: '#ea4335', initials: 'CC' },
+  ],
+}
+
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const EXAMPLE_SKILLS = [
@@ -105,56 +245,52 @@ const EXAMPLE_SKILLS = [
   'web-artifacts-builder',
 ]
 
-interface Connector {
-  id: string
-  name: string
-  badge?: string
-  color: string
-  initials: string
-}
-
-const CONNECTOR_GROUPS: Record<string, Connector[]> = {
-  Web: [
-    { id: 'github', name: 'GitHub', color: '#24292e', initials: 'GH' },
-    { id: 'gdrive', name: 'Google Drive', color: '#4285f4', initials: 'GD' },
-    { id: 'gmail', name: 'Gmail', color: '#ea4335', initials: 'GM' },
-    { id: 'gcal', name: 'Google Calendar', color: '#1a73e8', initials: 'GC' },
-  ],
-  Desktop: [
-    { id: 'chrome', name: 'Claude in Chrome', badge: 'INCLUDED', color: '#ea4335', initials: 'CC' },
-  ],
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 interface CustomizeProps {
   workDir?: string
 }
 
+type TestState = 'idle' | 'testing' | 'ok' | 'error'
+
 export default function Customize({ workDir }: CustomizeProps) {
   const [subPage, setSubPage] = useState<'skills' | 'connectors' | null>(null)
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null)
-  const [selectedConnector, setSelectedConnector] = useState<Connector | null>(null)
+  const [selectedConnectorId, setSelectedConnectorId] = useState<string | null>(null)
   const [customSkills, setCustomSkills] = useState<CustomSkill[]>([])
   const [enabledSkills, setEnabledSkills] = useState<string[]>([])
   const [connections, setConnections] = useState<Record<string, string>>({})
-  const [connectingId, setConnectingId] = useState<string | null>(null)
-  const [tokenDraft, setTokenDraft] = useState('')
   const [listSearch, setListSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
+
+  // Multi-field draft state per connector
+  const [draftFields, setDraftFields] = useState<Record<string, string>>({})
+  const [testState, setTestState] = useState<TestState>('idle')
+  const [testMessage, setTestMessage] = useState('')
+
+  // GitHub legacy connector state
+  const [connectingGh, setConnectingGh] = useState(false)
+  const [ghDraft, setGhDraft] = useState('')
 
   useEffect(() => {
     window.nohi.getCustomSkills().then(setCustomSkills).catch(() => {})
     window.nohi.getSettings().then((s) => {
       setEnabledSkills(s.enabledSkills ?? [])
-    }).catch(() => {})
-    window.nohi.getSettings().then((s) => {
       setConnections(s.connections ?? {})
     }).catch(() => {})
   }, [])
 
+  // Reset draft when connector changes
+  useEffect(() => {
+    if (!selectedConnectorId) return
+    setDraftFields({})
+    setTestState('idle')
+    setTestMessage('')
+    setConnectingGh(false)
+    setGhDraft('')
+  }, [selectedConnectorId])
+
   const isSkillEnabled = (name: string) => {
-    // empty enabledSkills means all enabled
     return enabledSkills.length === 0 || enabledSkills.includes(name)
   }
 
@@ -165,7 +301,6 @@ export default function Customize({ workDir }: CustomizeProps) {
     ]
     let next: string[]
     if (enabledSkills.length === 0) {
-      // All enabled → disable this one (enable all others)
       next = allNames.filter((n) => n !== name)
     } else if (enabledSkills.includes(name)) {
       next = enabledSkills.filter((n) => n !== name)
@@ -177,19 +312,26 @@ export default function Customize({ workDir }: CustomizeProps) {
     await window.nohi.saveSettings({ ...s, enabledSkills: next }).catch(() => {})
   }
 
-  const saveConnection = async (id: string, value: string) => {
+  const saveConnection = async (id: string, value: string, mcpEntry?: { name: string; command: string; args?: string[]; env?: Record<string, string> }) => {
     const s = await window.nohi.getSettings()
-    const next = { ...(s.connections ?? {}), [id]: value }
-    await window.nohi.saveSettings({ ...s, connections: next })
-    setConnections(next)
+    const nextConns = { ...(s.connections ?? {}), [id]: value }
+    let nextMcp = s.mcpServers ?? []
+    if (mcpEntry) {
+      nextMcp = nextMcp.filter((m) => m.name !== mcpEntry.name)
+      nextMcp.push(mcpEntry)
+    }
+    await window.nohi.saveSettings({ ...s, connections: nextConns, mcpServers: nextMcp })
+    setConnections(nextConns)
   }
 
-  const removeConnection = async (id: string) => {
+  const removeConnection = async (id: string, mcpName?: string) => {
     const s = await window.nohi.getSettings()
-    const next = { ...(s.connections ?? {}) }
-    delete next[id]
-    await window.nohi.saveSettings({ ...s, connections: next })
-    setConnections(next)
+    const nextConns = { ...(s.connections ?? {}) }
+    delete nextConns[id]
+    let nextMcp = s.mcpServers ?? []
+    if (mcpName) nextMcp = nextMcp.filter((m) => m.name !== mcpName)
+    await window.nohi.saveSettings({ ...s, connections: nextConns, mcpServers: nextMcp })
+    setConnections(nextConns)
   }
 
   const isConnected = (id: string) => !!connections[id]
@@ -199,12 +341,184 @@ export default function Customize({ workDir }: CustomizeProps) {
   const handleSelectSubPage = (p: 'skills' | 'connectors') => {
     setSubPage(p)
     setSelectedSkill(null)
-    setSelectedConnector(null)
+    setSelectedConnectorId(null)
     setListSearch('')
     setShowSearch(false)
   }
 
+  // ── Connector test & save ─────────────────────────────────────────────────
+
+  const handleTestAndConnect = async (def: ConnectorDef) => {
+    setTestState('testing')
+    setTestMessage('')
+
+    try {
+      // For GA/Workspace: write credentials file first
+      let credsForTest = { ...draftFields }
+      let savedCredPath: string | null = null
+
+      if ((def.id === 'google_analytics' || def.id === 'google_workspace') && draftFields.credentials_json) {
+        const filename = `${def.id}.json`
+        savedCredPath = await window.nohi.writeCredentialsFile(filename, draftFields.credentials_json)
+        if (!savedCredPath) {
+          setTestState('error')
+          setTestMessage('Failed to save credentials file — check disk permissions')
+          return
+        }
+        credsForTest = { ...credsForTest, credentials_path: savedCredPath }
+      }
+
+      const result = await window.nohi.testConnection(def.id, credsForTest)
+
+      if (!result.ok) {
+        setTestState('error')
+        setTestMessage(result.error ?? 'Connection failed')
+        return
+      }
+
+      // Build the connection value (store all creds as JSON)
+      const connValue: Record<string, string> = { ...credsForTest }
+      if (savedCredPath) connValue.credentials_path = savedCredPath
+
+      // Build MCP entry if needed (only google_analytics currently uses MCP)
+      let mcpEntry: { name: string; command: string; args?: string[]; env?: Record<string, string> } | undefined
+      if (def.isMcp && def.mcpCommand) {
+        const env: Record<string, string> = {}
+        if (def.id === 'google_analytics') {
+          if (savedCredPath) env.GA_SERVICE_ACCOUNT_JSON = savedCredPath
+          env.GA_PROPERTY_ID = draftFields.property_id ?? ''
+        }
+        mcpEntry = {
+          name: def.name,
+          command: def.mcpCommand,
+          args: def.mcpArgs ?? [],
+          env,
+        }
+      }
+
+      await saveConnection(def.id, JSON.stringify(connValue), mcpEntry)
+      setTestState('ok')
+      setTestMessage('Connected successfully')
+    } catch (e) {
+      setTestState('error')
+      setTestMessage(String(e))
+    }
+  }
+
   // ── Right detail content ──────────────────────────────────────────────────
+
+  const renderConnectorDetail = () => {
+    const def = CONNECTOR_DEFS.find((d) => d.id === selectedConnectorId)
+    if (!def) return null
+
+    const connected = isConnected(def.id)
+    let existingCreds: Record<string, string> = {}
+    try { existingCreds = JSON.parse(connections[def.id] ?? '{}') } catch {}
+
+    if (connected) {
+      return (
+        <div className="cdetail-connector-detail">
+          <div className="cdetail-connector-hdr">
+            <div className="cdetail-connector-logo" style={{ background: def.color }}>
+              {def.initials}
+            </div>
+            <span className="cdetail-connector-name">{def.name}</span>
+            {def.isMcp && <span className="cdetail-badge-mcp">MCP</span>}
+          </div>
+          <div className="cdetail-connected-status">
+            <span className="cdetail-connected-check"><IconCheck /></span>
+            <span>Connected</span>
+          </div>
+          <p className="cdetail-connected-msg">{def.description}</p>
+          {def.fields.some((f) => f.key !== 'credentials_json' && existingCreds[f.key]) && (
+            <div className="cdetail-creds-summary">
+              {def.fields
+                .filter((f) => f.key !== 'credentials_json' && f.type !== 'password' && existingCreds[f.key])
+                .map((f) => (
+                  <div key={f.key} className="cdetail-cred-row">
+                    <span className="cdetail-cred-label">{f.label}</span>
+                    <span className="cdetail-cred-value">{existingCreds[f.key]}</span>
+                  </div>
+                ))}
+            </div>
+          )}
+          <button
+            className="cdetail-connector-btn-danger"
+            onClick={() => removeConnection(def.id, def.isMcp ? def.name : undefined)}
+          >
+            Disconnect
+          </button>
+        </div>
+      )
+    }
+
+    const canSubmit = def.fields.every((f) => (draftFields[f.key] ?? '').trim().length > 0)
+
+    return (
+      <div className="cdetail-connector-detail">
+        <div className="cdetail-connector-hdr">
+          <div className="cdetail-connector-logo" style={{ background: def.color }}>
+            {def.initials}
+          </div>
+          <span className="cdetail-connector-name">{def.name}</span>
+          {def.isMcp && <span className="cdetail-badge-mcp">MCP</span>}
+        </div>
+        <p className="cdetail-connector-desc">{def.description}</p>
+
+        <div className="cdetail-token-form">
+          {def.fields.map((field) => (
+            <div key={field.key} className="cdetail-field-group">
+              <label className="cdetail-field-label">{field.label}</label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  className="cdetail-field-textarea"
+                  placeholder={field.placeholder}
+                  value={draftFields[field.key] ?? ''}
+                  onChange={(e) => setDraftFields((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                  rows={5}
+                  spellCheck={false}
+                />
+              ) : (
+                <input
+                  className="cdetail-token-input"
+                  type={field.type === 'password' ? 'password' : 'text'}
+                  placeholder={field.placeholder}
+                  value={draftFields[field.key] ?? ''}
+                  onChange={(e) => setDraftFields((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                  autoComplete="off"
+                />
+              )}
+              {field.hint && (
+                <p className="cdetail-token-hint">
+                  {field.hint}
+                  {field.hintUrl && (
+                    <> — <button className="cdetail-link-btn" onClick={() => window.nohi.openExternal(field.hintUrl!)}>{field.hintLabel ?? 'Learn more'} ↗</button></>
+                  )}
+                </p>
+              )}
+            </div>
+          ))}
+
+          {testState === 'error' && (
+            <div className="cdetail-test-error">{testMessage}</div>
+          )}
+          {testState === 'ok' && (
+            <div className="cdetail-test-ok">{testMessage}</div>
+          )}
+
+          <div className="cdetail-token-actions">
+            <button
+              className="cdetail-connector-btn"
+              disabled={!canSubmit || testState === 'testing'}
+              onClick={() => handleTestAndConnect(def)}
+            >
+              {testState === 'testing' ? 'Testing…' : 'Test & Connect'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const renderDetail = () => {
     if (subPage === 'skills' && selectedSkill) {
@@ -246,17 +560,17 @@ export default function Customize({ workDir }: CustomizeProps) {
       )
     }
 
-    if (subPage === 'connectors' && selectedConnector) {
-      const connected = isConnected(selectedConnector.id)
+    if (subPage === 'connectors' && selectedConnectorId) {
+      // Commerce / platform connectors
+      const def = CONNECTOR_DEFS.find((d) => d.id === selectedConnectorId)
+      if (def) return renderConnectorDetail()
 
-      // Chrome connector — show installation guide
-      if (selectedConnector.id === 'chrome') {
+      // Chrome connector (built-in)
+      if (selectedConnectorId === 'chrome') {
         return (
           <div className="cdetail-chrome-guide">
             <div className="cdetail-connector-hdr">
-              <div className="cdetail-connector-logo" style={{ background: selectedConnector.color }}>
-                {selectedConnector.initials}
-              </div>
+              <div className="cdetail-connector-logo" style={{ background: '#ea4335' }}>CC</div>
               <span className="cdetail-connector-name">Claude in Chrome</span>
               <span className="cdetail-badge-included">INCLUDED</span>
             </div>
@@ -268,85 +582,55 @@ export default function Customize({ workDir }: CustomizeProps) {
               <li>Restart Nohi if prompted</li>
               <li>In your next chat, ask Nohi to "open Chrome and search for…"</li>
             </ol>
-            <button
-              className="cdetail-connector-btn"
-              onClick={() => window.nohi.openExternal('https://nohi.so/docs#chrome')}
-            >
+            <button className="cdetail-connector-btn" onClick={() => window.nohi.openExternal('https://nohi.so/docs#chrome')}>
               View docs ↗
             </button>
           </div>
         )
       }
 
-      // GitHub connector — Personal Access Token
-      if (selectedConnector.id === 'github') {
+      // GitHub connector
+      if (selectedConnectorId === 'github') {
+        const connected = isConnected('github')
         return (
           <div className="cdetail-connector-detail">
             <div className="cdetail-connector-hdr">
-              <div className="cdetail-connector-logo" style={{ background: selectedConnector.color }}>
-                {selectedConnector.initials}
-              </div>
-              <span className="cdetail-connector-name">{selectedConnector.name}</span>
-              {connected ? (
-                <button className="cdetail-connector-btn cdetail-connector-btn-danger" onClick={() => removeConnection(selectedConnector.id)}>
-                  Disconnect
-                </button>
-              ) : null}
+              <div className="cdetail-connector-logo" style={{ background: '#24292e' }}>GH</div>
+              <span className="cdetail-connector-name">GitHub</span>
+              {connected && (
+                <button className="cdetail-connector-btn-danger" onClick={() => removeConnection('github')}>Disconnect</button>
+              )}
             </div>
             {connected ? (
               <p className="cdetail-connected-msg">✓ Connected — Nohi can access GitHub on your behalf.</p>
-            ) : connectingId === selectedConnector.id ? (
+            ) : connectingGh ? (
               <div className="cdetail-token-form">
                 <p className="cdetail-token-label">Paste your GitHub Personal Access Token:</p>
-                <input
-                  className="cdetail-token-input"
-                  type="password"
-                  placeholder="ghp_xxxxxxxxxxxx"
-                  value={tokenDraft}
-                  onChange={(e) => setTokenDraft(e.target.value)}
-                />
+                <input className="cdetail-token-input" type="password" placeholder="ghp_xxxxxxxxxxxx" value={ghDraft} onChange={(e) => setGhDraft(e.target.value)} />
                 <p className="cdetail-token-hint">
                   Create one at <button className="cdetail-link-btn" onClick={() => window.nohi.openExternal('https://github.com/settings/tokens')}>github.com/settings/tokens</button> with <code>repo</code> scope.
                 </p>
                 <div className="cdetail-token-actions">
                   <button className="cdetail-connector-btn" onClick={async () => {
-                    if (tokenDraft.trim()) {
-                      await saveConnection(selectedConnector.id, tokenDraft.trim())
-                      setConnectingId(null)
-                      setTokenDraft('')
-                    }
+                    if (ghDraft.trim()) { await saveConnection('github', ghDraft.trim()); setConnectingGh(false); setGhDraft('') }
                   }}>Save token</button>
-                  <button className="cdetail-connector-btn-ghost" onClick={() => { setConnectingId(null); setTokenDraft('') }}>Cancel</button>
+                  <button className="cdetail-connector-btn-ghost" onClick={() => { setConnectingGh(false); setGhDraft('') }}>Cancel</button>
                 </div>
               </div>
             ) : (
-              <button className="cdetail-connector-btn" onClick={() => { setConnectingId(selectedConnector.id); setTokenDraft('') }}>
-                Connect
-              </button>
+              <button className="cdetail-connector-btn" onClick={() => setConnectingGh(true)}>Connect</button>
             )}
           </div>
         )
       }
 
-      // Google Drive / Gmail / Calendar — OAuth coming soon
       return (
         <div className="cdetail-connector-detail">
           <div className="cdetail-connector-hdr">
-            <div className="cdetail-connector-logo" style={{ background: selectedConnector.color }}>
-              {selectedConnector.initials}
-            </div>
-            <span className="cdetail-connector-name">{selectedConnector.name}</span>
+            <div className="cdetail-connector-logo" style={{ background: '#4285f4' }}>??</div>
+            <span className="cdetail-connector-name">Coming soon</span>
           </div>
-          <p className="cdetail-coming-soon">
-            OAuth integration coming soon. {selectedConnector.name} connection will be available in a future update.
-          </p>
-          <button
-            className="cdetail-connector-btn"
-            disabled
-            style={{ opacity: 0.5, cursor: 'not-allowed' }}
-          >
-            Connect (Coming soon)
-          </button>
+          <p className="cdetail-coming-soon">OAuth integration coming soon.</p>
         </div>
       )
     }
@@ -439,10 +723,35 @@ export default function Customize({ workDir }: CustomizeProps) {
       )
     }
 
-    // Connectors
+    // Connectors list
+    const commerceGroups: Record<string, ConnectorDef[]> = {}
+    for (const def of CONNECTOR_DEFS) {
+      if (!q || def.name.toLowerCase().includes(q)) {
+        if (!commerceGroups[def.group]) commerceGroups[def.group] = []
+        commerceGroups[def.group].push(def)
+      }
+    }
+
     return (
       <>
-        {Object.entries(CONNECTOR_GROUPS).map(([group, connectors]) => {
+        {Object.entries(commerceGroups).map(([group, defs]) => (
+          <React.Fragment key={group}>
+            <div className="clist-group-label">{group}</div>
+            {defs.map((d) => (
+              <button
+                key={d.id}
+                className={`clist-item ${selectedConnectorId === d.id ? 'selected' : ''}`}
+                onClick={() => { setSelectedConnectorId(d.id); setSelectedSkill(null) }}
+              >
+                <div className="clist-logo" style={{ background: d.color }}>{d.initials}</div>
+                <span className="clist-item-name">{d.name}</span>
+                {isConnected(d.id) && <span className="clist-badge clist-badge-connected">✓</span>}
+              </button>
+            ))}
+          </React.Fragment>
+        ))}
+
+        {Object.entries(LEGACY_CONNECTOR_GROUPS).map(([group, connectors]) => {
           const filtered = connectors.filter((c) => !q || c.name.toLowerCase().includes(q))
           if (filtered.length === 0) return null
           return (
@@ -451,8 +760,8 @@ export default function Customize({ workDir }: CustomizeProps) {
               {filtered.map((c) => (
                 <button
                   key={c.id}
-                  className={`clist-item ${selectedConnector?.id === c.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedConnector(c)}
+                  className={`clist-item ${selectedConnectorId === c.id ? 'selected' : ''}`}
+                  onClick={() => { setSelectedConnectorId(c.id); setSelectedSkill(null) }}
                 >
                   <div className="clist-logo" style={{ background: c.color }}>{c.initials}</div>
                   <span className="clist-item-name">{c.name}</span>
@@ -463,9 +772,11 @@ export default function Customize({ workDir }: CustomizeProps) {
             </React.Fragment>
           )
         })}
-        {q && Object.values(CONNECTOR_GROUPS).flat().every((c) => !c.name.toLowerCase().includes(q)) && (
-          <div className="clist-empty">No connectors match "{listSearch}"</div>
-        )}
+
+        {q && CONNECTOR_DEFS.every((d) => !d.name.toLowerCase().includes(q)) &&
+          Object.values(LEGACY_CONNECTOR_GROUPS).flat().every((c) => !c.name.toLowerCase().includes(q)) && (
+            <div className="clist-empty">No connectors match "{listSearch}"</div>
+          )}
       </>
     )
   }

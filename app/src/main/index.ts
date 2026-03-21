@@ -82,10 +82,10 @@ app.whenReady().then(async () => {
   })
 
   // ── Agent streaming ───────────────────────────────────────────────────────
-  ipcMain.handle('run-agent', async (_e, payload: { messages: AgentMessage[]; mode?: AgentMode }) => {
+  ipcMain.handle('run-agent', async (_e, payload: { messages: AgentMessage[]; mode?: AgentMode; workDir?: string }) => {
     return runAgent(payload.messages, (chunk) => {
       win.webContents.send('agent-chunk', chunk)
-    }, { mode: payload.mode })
+    }, { mode: payload.mode, workDir: payload.workDir })
   })
 
   // ── Sessions ──────────────────────────────────────────────────────────────
@@ -190,6 +190,84 @@ app.whenReady().then(async () => {
   ipcMain.handle('delete-plan-file', async (_e, dir: string, name: string) => {
     const resolved = dir.startsWith('~') ? dir.replace('~', os.homedir()) : dir
     await fs.promises.unlink(path.join(resolved, '.claude', 'plans', name))
+  })
+
+  // ── Connector: test connection ────────────────────────────────────────────
+  ipcMain.handle('test-connection', async (_e, id: string, creds: Record<string, string>) => {
+    try {
+      switch (id) {
+        case 'saleor': {
+          const resp = await fetch(creds.url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${creds.token}` },
+            body: JSON.stringify({ query: '{ shop { name } }' }),
+          })
+          if (!resp.ok) return { ok: false, error: `HTTP ${resp.status}` }
+          return { ok: true }
+        }
+        case 'shopify': {
+          const domain = creds.domain.replace(/^https?:\/\//, '').replace(/\/$/, '')
+          const resp = await fetch(`https://${domain}/api/2024-01/graphql.json`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Shopify-Storefront-Access-Token': creds.storefront_token,
+            },
+            body: JSON.stringify({ query: '{ shop { name } }' }),
+          })
+          if (!resp.ok) return { ok: false, error: `HTTP ${resp.status}` }
+          const json = await resp.json() as { errors?: unknown[] }
+          if (json.errors && (json.errors as unknown[]).length > 0) return { ok: false, error: 'Invalid storefront token' }
+          return { ok: true }
+        }
+        case 'stripe': {
+          const resp = await fetch('https://api.stripe.com/v1/balance', {
+            headers: { 'Authorization': `Bearer ${creds.secret_key}` },
+          })
+          if (!resp.ok) return { ok: false, error: `HTTP ${resp.status}` }
+          return { ok: true }
+        }
+        case 'google_analytics': {
+          try { JSON.parse(creds.credentials_json) } catch { return { ok: false, error: 'Service Account JSON is not valid JSON' } }
+          if (!creds.property_id?.trim()) return { ok: false, error: 'Property ID is required' }
+          return { ok: true }
+        }
+        case 'google_workspace': {
+          try { JSON.parse(creds.credentials_json) } catch { return { ok: false, error: 'Service Account JSON is not valid JSON' } }
+          return { ok: true }
+        }
+        case 'feishu': {
+          const resp = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ app_id: creds.app_id, app_secret: creds.app_secret }),
+          })
+          const json = await resp.json() as { code: number; msg: string }
+          if (json.code !== 0) return { ok: false, error: json.msg }
+          return { ok: true }
+        }
+        case 'klaviyo': {
+          const resp = await fetch('https://a.klaviyo.com/api/accounts/', {
+            headers: { 'Authorization': `Klaviyo-API-Key ${creds.api_key}`, 'revision': '2024-02-15' },
+          })
+          if (!resp.ok) return { ok: false, error: `HTTP ${resp.status}` }
+          return { ok: true }
+        }
+        default:
+          return { ok: false, error: 'Unknown connector' }
+      }
+    } catch (e) {
+      return { ok: false, error: String(e) }
+    }
+  })
+
+  // ── Connector: write credentials file ────────────────────────────────────
+  ipcMain.handle('write-credentials-file', async (_e, filename: string, content: string) => {
+    const dir = path.join(os.homedir(), '.nohi', 'credentials')
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    const filePath = path.join(dir, filename)
+    fs.writeFileSync(filePath, content, 'utf-8')
+    return filePath
   })
 
   // ── Directory dialog ──────────────────────────────────────────────────────
